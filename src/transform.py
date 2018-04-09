@@ -135,6 +135,12 @@ def quaternion_from_euler(yaw=0.0, pitch=0.0, roll=0.0, radians=None):
     return quaternion(x=coy*sir*cop - siy*cor*sip, y=coy*cor*sip + siy*sir*cop,
                       z=siy*cor*cop - coy*sir*sip, w=coy*cor*cop + siy*sir*sip)
 
+def axis_of_quaternion(q):
+    angle = math.acos(q[0]) * 2
+    diviser = sin(angle/2)
+    if diviser == 0:
+        return vec((0,1,0))
+    return vec((acos(q[1]/diviser),acos(q[2]/diviser),acos(q[3]/diviser)))
 
 def quaternion_mul(q1, q2):
     """ Compute quaternion which composes rotations of two quaternions """
@@ -181,12 +187,16 @@ class Trackball:
         """ Build a new trackball with specified view, angles in degrees """
         self.rotation = quaternion_from_euler(yaw, roll, pitch, radians)
         self.distance = max(distance, 0.001)
-        self.pos2d = vec(0.0, 0.0)
+        self.target_point = vec(0.0, 0.0, 0.0)
+        self.angle_z = 0
+        self.angle_xy = 0
 
     def drag(self, old, new, winsize):
         """ Move trackball from old to new 2d normalized window position """
         old, new = ((2*vec(pos) - winsize) / winsize for pos in (old, new))
-        self.rotation = quaternion_mul(self._rotate(old, new), self.rotation)
+        vec_angle = new - old
+        self.angle_xy -= vec_angle[0]
+        self.angle_z -= vec_angle[1]
 
     def zoom(self, delta, size):
         """ Zoom trackball by a factor delta normalized by window size """
@@ -194,11 +204,16 @@ class Trackball:
 
     def pan(self, old, new):
         """ Pan in camera's reference by a 2d vector factor of (new - old) """
-        self.pos2d += (vec(new) - old) * 0.001 * self.distance
+        self.target_point += (vec(new) - old) * 0.001 * self.distance
 
     def view_matrix(self):
         """ View matrix transformation, including distance to target point """
-        return translate(*self.pos2d, -self.distance) @ self.matrix()
+        direction = normalized(vec((math.cos(self.angle_xy),math.sin(self.angle_xy),
+                 math.tan(self.angle_z))))
+        eye = self.target_point + self.distance * direction
+        to_cross = vec((-math.sin(self.angle_xy),math.cos(self.angle_xy)))
+        return lookat(eye, self.target_point, np.cross(direction, to_cross))
+        # return translate(*self.target_point, -self.distance) @ self.matrix()
 
     def projection_matrix(self, winsize):
         """ Projection matrix with z-clipping range adaptive to distance """
