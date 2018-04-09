@@ -45,5 +45,5 @@ class KeyFrames:
         # in self.values, using the initially stored self.interpolate function
         fraction = (time - self.times[i]) \
                 / (self.times[i+1] - self.times[i])
-        return self.interpolate(self.values[i], 
+        return self.interpolate(self.values[i],
                 self.values[i+1], fraction)

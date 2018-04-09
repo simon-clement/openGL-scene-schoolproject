@@ -4,7 +4,7 @@ import pyassimp
 import pyassimp.errors
 from src.texture import Texture
 from src.meshes import TexturedMesh, ColorMesh, PhongMesh, SkinnedMesh, SkyBoxMesh
-from src.node import SkinningControlNode
+from src.node import SkinningControlNode, Node
 from src.shader import MAX_BONES, MAX_VERTEX_BONES
 
 
@@ -133,8 +133,9 @@ def load_textured(file):
 
 
 
-def load(file):
+def load_with_hierarchy(file):
     """ load resources from file using pyassimp, return list of ColorMesh """
+    nodes = {}  # nodes: string name -> node dictionary
     try:
         option = pyassimp.postprocess.aiProcessPreset_TargetRealtime_MaxQuality
         scene = pyassimp.load(file, option)
@@ -142,12 +143,29 @@ def load(file):
         print('ERROR: pyassimp unable to load', file)
         return []     # error reading => return empty list
 
-    meshes = [PhongMesh([m.vertices, m.normals], m.faces) for m in scene.meshes]
-    size = sum((mesh.faces.shape[0] for mesh in scene.meshes))
-    print('Loaded %s\t(%d meshes, %d faces)' % (file, len(scene.meshes), size))
+    def make_nodes(pyassimp_node):
+        """ Recursively builds nodes for our graph, matching pyassimp nodes """
+        node = Node(name=pyassimp_node.name,
+                    transform=pyassimp_node.transformation)
+        nodes[pyassimp_node.name] = node, pyassimp_node
+        node.add(*(make_nodes(child) for child in pyassimp_node.children))
+        return node
 
+    root_node = make_nodes(scene.rootnode)
+
+    # ---- create ColorMesh objects
+    for mesh in scene.meshes:
+        mesh.loaded_mesh = PhongMesh([mesh.vertices, mesh.normals],
+                                     mesh.faces)
+
+    for final_node, assimp_node in nodes.values():
+        final_node.add(*(_mesh.loaded_mesh for _mesh in assimp_node.meshes))
+
+    nb_triangles = sum((mesh.faces.shape[0] for mesh in scene.meshes))
+    print('Loaded', file, '\t(%d meshes, %d faces, %d nodes, %d animations)' %
+          (len(scene.meshes), nb_triangles, len(nodes), len(scene.animations)))
     pyassimp.release(scene)
-    return meshes
+    return [root_node]
 
 def load_skybox(sphere, texture):
     """ load skybox 'sphere' with sky texture 'texture' """
