@@ -24,7 +24,7 @@ from src.vertexArray import VertexArray
 from src.node import *
 from src.viewer import Viewer
 from src.interaction import GLFWTrackball
-from src.loaders import load_skinned
+from src.loaders import load_skinned, load_skybox
 
 
 # -------------- main program and scene setup --------------------------------
@@ -32,13 +32,16 @@ def main():
     """ create a window, add scene objects, then run rendering loop """
     viewer = Viewer()
 
-    if len(sys.argv) < 2:
-        print('Cylinder skinning demo.')
-        print('Note:\n\t%s [3dfile]*\n\n3dfile\t\t the filename of a model in'
-              ' format supported by pyassimp.' % sys.argv[0])
-        viewer.add(SkinnedCylinder())
-    else:
-        viewer.add(*[m for file in sys.argv[1:] for m in load_skinned(file)])
+    # Sky box :
+    # viewer.add(load_skybox("sphere.dae", "ciel.jpg"))
+
+    # if len(sys.argv) < 2:
+    #     print('Cylinder skinning demo.')
+    #     print('Note:\n\t%s [3dfile]*\n\n3dfile\t\t the filename of a model in'
+    #           ' format supported by pyassimp.' % sys.argv[0])
+    #     viewer.add(SkinnedCylinder())
+    # else:
+    #     viewer.add(*[m for file in sys.argv[1:] for m in load_skinned(file)])
 
     # start rendering loop
     viewer.run()

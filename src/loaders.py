@@ -3,7 +3,7 @@ import os
 import pyassimp
 import pyassimp.errors
 from src.texture import Texture
-from src.meshes import TexturedMesh, ColorMesh, PhongMesh, SkinnedMesh
+from src.meshes import TexturedMesh, ColorMesh, PhongMesh, SkinnedMesh, SkyBoxMesh
 from src.node import SkinningControlNode
 from src.shader import MAX_BONES, MAX_VERTEX_BONES
 
@@ -149,3 +149,27 @@ def load(file):
     pyassimp.release(scene)
     return meshes
 
+def load_skybox(sphere, texture):
+    """ load skybox 'sphere' with sky texture 'texture' """
+
+    # fichier sphere valide :
+    try:
+        option = pyassimp.postprocess.aiProcessPreset_TargetRealtime_MaxQuality
+        scene = pyassimp.load(sphere, option)
+    except pyassimp.errors.AssimpError:
+        print('ERROR: pyassimp unable to load', sphere)
+        return []     # error reading => return empty list
+    # fichier txture valide :
+    try:
+        option = pyassimp.postprocess.aiProcessPreset_TargetRealtime_MaxQuality
+        scene = pyassimp.load(texture, option)
+    except pyassimp.errors.AssimpError:
+        print('ERROR: pyassimp unable to load', texture)
+        return []  # error reading => return empty list
+
+    meshes = [SkyBoxMesh(texture, [m.vertices, m.normals], m.faces) for m in scene.meshes]
+    size = sum((mesh.faces.shape[0] for mesh in scene.meshes))
+    print('Loaded %s\t(%d meshes, %d faces)' % (file, len(scene.meshes), size))
+
+    pyassimp.release(scene)
+    return meshes

@@ -3,6 +3,34 @@ from src.shader import *
 import src
 from src.node import Node, SkinningControlNode
 
+# -------------- Sky box mesh -------------------------------------------------
+class SkyBoxMesh():
+    """ """
+    def __init__(self, texture, attributes, shader, index=None):
+        self.vertex_array = VertexArray(attributes, index)
+        self.shader = shader
+        self.texture = texture
+
+    def draw(self, projection, view, model, win=None, **_kwargs):
+
+        GL.glUseProgram(self.shader.glid)
+
+        # projection geometry
+        loc = GL.glGetUniformLocation(self.shader.glid, 'modelviewprojection')
+        GL.glUniformMatrix4fv(loc, 1, True, projection @ view @ model)
+
+        # texture access setups
+        loc = GL.glGetUniformLocation(self.shader.glid, 'diffuseMap')
+        GL.glActiveTexture(GL.GL_TEXTURE0)
+        GL.glBindTexture(GL.GL_TEXTURE_2D, self.texture.glid)
+        GL.glUniform1i(loc, 0)
+        self.vertex_array.draw(GL.GL_TRIANGLES)
+
+        # leave clean state for easier debugging
+        GL.glBindTexture(GL.GL_TEXTURE_2D, 0)
+        GL.glUseProgram(0)
+
+
 # -------------- Deformable Cylinder Mesh  ------------------------------------
 class SkinnedCylinder(SkinningControlNode):
     """ Deformable cylinder """
@@ -215,4 +243,3 @@ class TexturedMesh:
         # leave clean state for easier debugging
         GL.glBindTexture(GL.GL_TEXTURE_2D, 0)
         GL.glUseProgram(0)
-
