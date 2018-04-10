@@ -66,14 +66,11 @@ out vec4 color;
 uniform vec3 view;
 void main() {
     vec4 ambiant = vec4(0.1,0,0,1);
-    vec4 ambiantReflect = vec4(0,1,0,1);
     vec3 normal = normalize(outNormal);
-    vec3 l = vec3(0, -1, 0);
-    vec4 col = vec4(0.5, 0.5, 0.5, 1);
+    vec3 l = vec3(0, 0, 1);
+    vec4 col = vec4(1, 0.8, 0.6, 1);
     float dotP = max(0, dot(normal, l));
-    float s = 15;
-    float dotS = max(0, pow(dot(reflect(l, normal), view), s));
-    color = col*dotP + ambiant + ambiantReflect * dotS;
+    color = col*dotP + ambiant;
 }"""
 
 

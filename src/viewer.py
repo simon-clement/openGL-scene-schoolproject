@@ -21,7 +21,6 @@ class Viewer:
     """ GLFW viewer window, with classic initialization & graphics loop """
 
     def __init__(self, width=640, height=480):
-        self.position = [-1, 0, -2.5]
 
         # version hints: create GL window with >= OpenGL 3.3 and core profile
         glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
@@ -65,17 +64,15 @@ class Viewer:
             # mAngle += 0.01
             ModelMat = np.matrix(rotate((1, 0, 1), mAngle)) * \
                 np.matrix(rotate(angle=92))
-            viewMat = np.matrix(translate(self.position[0],
-                                          self.position[1],
-                                          self.position[2]))
-            perspMat = np.matrix(frustum(-1, 1, -1, 1, 1, 4))
             winsize = glfw.get_window_size(self.win)
             view = self.trackball.view_matrix()
+            view_vec = self.trackball.view_vector()
             projection = self.trackball.projection_matrix(winsize)
             # draw our scene objects
             for drawable in self.drawables:
-                drawable.draw(projection, view, ModelMat, 
-                        shader=self.lambertian_shader, win=self.win)
+                drawable.draw(projection, view, ModelMat,
+                              shader=self.lambertian_shader, win=self.win,
+                              view_vector=view_vec)
 
             # flush render commands, and swap draw buffers
             glfw.swap_buffers(self.win)

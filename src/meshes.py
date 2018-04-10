@@ -149,8 +149,9 @@ class PhongMesh:
 
     def draw(self, projection, view, model, shader=None,
              color=(1, 1, 1, 1), view_vector=(0, 0, 1), **param):
-        if shader is not None:
-            GL.glUseProgram(shader.glid)
+        if shader is None:
+            return
+        GL.glUseProgram(shader.glid)
         viewMatrix_location = \
             GL.glGetUniformLocation(shader.glid, 'viewMatrix')
         projMatrix_location = \

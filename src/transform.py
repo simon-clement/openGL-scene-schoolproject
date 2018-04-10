@@ -206,12 +206,16 @@ class Trackball:
         """ Pan in camera's reference by a 2d vector factor of (new - old) """
         self.target_point += (vec(new) - old) * 0.001 * self.distance
 
+    def view_vector(self):
+        """ return the view vector. """
+        return -vec((math.cos(self.angle_xy),math.sin(self.angle_xy),
+                 math.tan(self.angle_z)))
+
     def view_matrix(self):
         """ View matrix transformation, including distance to target point """
-        direction = normalized(vec((math.cos(self.angle_xy),math.sin(self.angle_xy),
-                 math.tan(self.angle_z))))
-        eye = self.target_point + self.distance * direction
-        to_cross = vec((-math.sin(self.angle_xy),math.cos(self.angle_xy)))
+        direction = normalized(self.view_vector())
+        eye = self.target_point - self.distance * direction
+        to_cross = vec((math.sin(self.angle_xy),-math.cos(self.angle_xy)))
         return lookat(eye, self.target_point, np.cross(direction, to_cross))
         # return translate(*self.target_point, -self.distance) @ self.matrix()
 
