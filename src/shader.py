@@ -46,6 +46,11 @@ class Shader:
 
 
 # ------------  Simple illumination shaders ----------------------
+"""
+float rand(vec2 co){
+    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+}
+"""
 LAMBERTIAN_VERT = """#version 330 core
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
@@ -54,7 +59,7 @@ uniform mat4 modelMatrix;
 uniform mat4 projMatrix;
 out vec3 outNormal;
 void main() {
-    gl_Position = projMatrix * (viewMatrix * (modelMatrix * vec4(position, 1)));
+    gl_Position = projMatrix * viewMatrix * modelMatrix * vec4(position, 1);
     mat4 modV = viewMatrix * modelMatrix;
     mat3 M = mat3(vec3(modV[0]), vec3(modV[1]), vec3(modV[2]));
     outNormal = transpose(inverse(M)) * normal;
@@ -73,6 +78,44 @@ void main() {
     color = col*dotP + ambiant;
 }"""
 
+
+# ----------- TODO create shaders for geysers ------------
+# id is the id of the particle. We need to specify a position in the shader
+# that depends on time and on id 
+# (id will be the seed of a continuous random generator)
+
+GEYSER_PARTICLE_VERT = """#version 330 core
+layout(location = 0) in vec3 position;
+layout(location = 1) in vec3 normal;
+uniform mat4 viewMatrix;
+uniform mat4 modelMatrix;
+uniform mat4 projMatrix;
+uniform float time;
+uniform float id_particle;
+out vec3 outNormal;
+
+void main() {
+    gl_Position = projMatrix * viewMatrix * modelMatrix * vec4(position, 1);
+    mat4 modV = viewMatrix * modelMatrix;
+    mat3 M = mat3(vec3(modV[0]), vec3(modV[1]), vec3(modV[2]));
+    outNormal = transpose(inverse(M)) * normal;
+}
+"""
+
+GEYSER_PARTICLE_FRAG = """#version 330 core
+in vec3 outNormal;
+out vec4 color;
+uniform vec3 view;
+void main() {
+    vec4 ambiant = vec4(0.1,0,0,1);
+    vec3 normal = normalize(outNormal);
+    vec3 l = vec3(0, 0, 1);
+    vec4 col = vec4(1, 0.8, 0.6, 1);
+    float dotP = max(0, dot(normal, l));
+    color = col*dotP + ambiant;
+}
+
+"""
 
 # ------------  Simple color shaders ------------------------------------------
 COLOR_VERT = """#version 330 core
