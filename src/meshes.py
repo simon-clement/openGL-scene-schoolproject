@@ -136,21 +136,15 @@ class SkinnedMesh:
         GL.glUseProgram(0)
 
 
-class Cylinder(Node):
-    def __init__(self):
-        super().__init__()
-        self.add(*src.loaders.load('cylinder.obj'))
-
 class PhongMesh:
     """ Mesh Object, loaded from obj file"""
 
     def __init__(self, attributes, index):
         self.vertexArray = VertexArray(attributes, index)
 
-    def draw(self, projection, view, model, shader=None,
+    def draw(self, projection, view, model, shaders=None,
              color=(1, 1, 1, 1), view_vector=(0, 0, 1), **param):
-        if shader is None:
-            return
+        shader = shaders[LAMBERTIAN_SHADER_ID]
         GL.glUseProgram(shader.glid)
         viewMatrix_location = \
             GL.glGetUniformLocation(shader.glid, 'viewMatrix')
@@ -177,7 +171,7 @@ class ColorMesh:
     def __init__(self, attributes, index):
         self.vertexArray = VertexArray(attributes, index)
 
-    def draw(self, projection, view, model, shader=None, color=(1,1,1,1), **param):
+    def draw(self, projection, view, model, color_shader=None, color=(1,1,1,1), **param):
         if color_shader is not None:
             GL.glUseProgram(shader.glid)
         matrix_location = GL.glGetUniformLocation(shader.glid, 'matrix')
@@ -188,35 +182,47 @@ class ColorMesh:
         # draw triangle as GL_TRIANGLE vertex array, draw array call
         self.vertexArray.draw(GL.GL_TRIANGLES)
 
+class ParticleMesh:
+    """ Mesh object to draw the geyser"""
 
-class Pyramid:
-    """Pramid object"""
+    def __init__(self, attributes, index):
+        self.vertexArray = VertexArray(attributes, index)
+        self.number_particle = 1
 
-    def __init__(self):
+    def set_number_of_particles(n):
+        self.number_particle = n
 
-        # triangle position buffer
-        position = np.array(((0, 1, 0), (-0.5, 0, 0.5), (.5, 0, .5),
-                             (0, 1, 0), (0.5, 0, 0.5), (.5, 0, -.5),
-                             (0, 1, 0), (0.5, 0, -0.5), (-.5, 0, -.5),
-                             (0, 1, 0), (-0.5, 0, -0.5), (-.5, 0, .5)), 'f')
-
-        couleur = np.array(((0, 1, 0), (1, 0, 1), (.5, 0, .5),
-                            (0, 0, 1), (0, 0, 1), (1, 0, 1),
-                            (0, 1, 0), (0.5, 0, 0), (.5, 0, 1),
-                            (1, 0, 0), (0, 0, 1), (1, 0, .5)), 'f')
-
-        self.vertexArray = VertexArray([position, couleur], None)
-
-    def draw(self, projection, view, model, shader):
+    def draw(self, projection, view, model, shaders=None, color=(1,1,1,1), **param):
+        shader = shaders[GEYSER_SHADER_ID]
+        GL.glEnable(GL.GL_CULL_FACE)
+        GL.glEnable(GL.GL_BLEND)
+        GL.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
+        GL.glDisable(GL.GL_DEPTH_TEST)
         GL.glUseProgram(shader.glid)
         matrix_location = GL.glGetUniformLocation(shader.glid, 'matrix')
 
         GL.glUniformMatrix4fv(matrix_location, 1, True,
                               projection * view * model)
 
-        # draw triangle as GL_TRIANGLE vertex array, draw array call
-        self.vertexArray.draw(GL.GL_TRIANGLES)
+        viewMatrix_location = \
+            GL.glGetUniformLocation(shader.glid, 'viewMatrix')
+        projMatrix_location = \
+            GL.glGetUniformLocation(shader.glid, 'projMatrix')
+        modelMatrix_location = \
+            GL.glGetUniformLocation(shader.glid, 'modelMatrix')
 
+        GL.glUniformMatrix4fv(modelMatrix_location, 1, True,
+                              model)
+        GL.glUniformMatrix4fv(viewMatrix_location, 1, True, view)
+        GL.glUniformMatrix4fv(projMatrix_location, 1, True, projection)
+
+        for i in range(self.number_particle):
+            # TODO load i in the uniform variable
+            self.vertexArray.draw(GL.GL_TRIANGLES)
+
+        GL.glDisable(GL.GL_CULL_FACE)
+        GL.glDisable(GL.GL_BLEND)
+        GL.glEnable(GL.GL_DEPTH_TEST)
 
 # mesh with a texture
 class TexturedMesh:

@@ -51,6 +51,12 @@ class Viewer:
         # compile and initialize shader programs once globally
         self.color_shader = Shader(COLOR_VERT, COLOR_FRAG)
         self.lambertian_shader = Shader(LAMBERTIAN_VERT, LAMBERTIAN_FRAG)
+        self.geyser_shader = Shader(GEYSER_PARTICLE_VERT, GEYSER_PARTICLE_FRAG)
+        self.shaders = {}
+        self.shaders[GEYSER_SHADER_ID] = self.geyser_shader
+        print("SHADER GEYSER : ", self.shaders[GEYSER_SHADER_ID])
+        self.shaders[LAMBERTIAN_SHADER_ID] = self.lambertian_shader
+        self.shaders[COLOR_SHADER_ID] = self.color_shader
 
         # initially empty list of object to draw
         self.drawables = []
@@ -71,7 +77,7 @@ class Viewer:
             # draw our scene objects
             for drawable in self.drawables:
                 drawable.draw(projection, view, ModelMat,
-                              shader=self.lambertian_shader, win=self.win,
+                              shaders=self.shaders, win=self.win,
                               view_vector=view_vec)
 
             # flush render commands, and swap draw buffers

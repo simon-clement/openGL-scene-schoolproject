@@ -6,7 +6,7 @@ class GLFWTrackball(Trackball):
     """ Use in Viewer for interactive viewpoint control """
 
     def __init__(self, win, bornes_zoom=(0.001, 190.),
-                 bornes_rotate=(0.5, 1.5)):
+                 bornes_rotate=(0.5, 1)):
         """ Init needs a GLFW window handler 'win' to register callbacks """
         super().__init__()
         self.angle_z = (bornes_rotate[0] + bornes_rotate[1])/2

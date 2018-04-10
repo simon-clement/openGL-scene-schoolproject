@@ -2,6 +2,9 @@ import OpenGL.GL as GL              # standard Python OpenGL wrapper
 import os                           # os function, i.e. checking file status
 
 # ------------ low level OpenGL object wrappers ----------------------------
+GEYSER_SHADER_ID = 0
+LAMBERTIAN_SHADER_ID = 1
+COLOR_SHADER_ID = 2
 class Shader:
     """ Helper class to create and automatically destroy shader program """
     @staticmethod
@@ -46,11 +49,6 @@ class Shader:
 
 
 # ------------  Simple illumination shaders ----------------------
-"""
-float rand(vec2 co){
-    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
-}
-"""
 LAMBERTIAN_VERT = """#version 330 core
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
@@ -87,6 +85,8 @@ void main() {
 GEYSER_PARTICLE_VERT = """#version 330 core
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
+layout(location = 2) in vec2 uvCoords;
+out vec2 fragTexCoord;
 uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
 uniform mat4 projMatrix;
@@ -95,6 +95,7 @@ uniform float id_particle;
 out vec3 outNormal;
 
 void main() {
+    fragTexCoord = uvCoords;
     gl_Position = projMatrix * viewMatrix * modelMatrix * vec4(position, 1);
     mat4 modV = viewMatrix * modelMatrix;
     mat3 M = mat3(vec3(modV[0]), vec3(modV[1]), vec3(modV[2]));
@@ -104,13 +105,20 @@ void main() {
 
 GEYSER_PARTICLE_FRAG = """#version 330 core
 in vec3 outNormal;
+in vec2 fragTexCoord;
 out vec4 color;
 uniform vec3 view;
+
+float rand(vec2 co){
+    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+}
+
 void main() {
-    vec4 ambiant = vec4(0.1,0,0,1);
     vec3 normal = normalize(outNormal);
     vec3 l = vec3(0, 0, 1);
-    vec4 col = vec4(1, 0.8, 0.6, 1);
+    float blank = rand(fragTexCoord)/2;
+    vec4 ambiant = vec4(0.1,0,0,blank);
+    vec4 col = vec4(1, 1, 1, blank);
     float dotP = max(0, dot(normal, l));
     color = col*dotP + ambiant;
 }
