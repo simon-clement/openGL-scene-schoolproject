@@ -171,9 +171,9 @@ class ColorMesh:
     def __init__(self, attributes, index):
         self.vertexArray = VertexArray(attributes, index)
 
-    def draw(self, projection, view, model, color_shader=None, color=(1,1,1,1), **param):
-        if color_shader is not None:
-            GL.glUseProgram(shader.glid)
+    def draw(self, projection, view, model, shaders=None, color=(1,1,1,1), **param):
+        shader = shaders[COLOR_SHADER_ID]
+        GL.glUseProgram(shader.glid)
         matrix_location = GL.glGetUniformLocation(shader.glid, 'matrix')
 
         GL.glUniformMatrix4fv(matrix_location, 1, True,
