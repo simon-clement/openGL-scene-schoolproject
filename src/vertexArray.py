@@ -48,7 +48,7 @@ class VertexArray:
         """draw a vertex array, either as direct array or indexed array"""
         GL.glBindVertexArray(self.glid)
         self.draw_command(primitive, *self.arguments)
-        GL.glBindVertexArray(0)
+        # GL.glBindVertexArray(0)
 
     def __del__(self):  # object dies => kill GL array and buffers from GPU
         GL.glDeleteVertexArrays(1, [self.glid])

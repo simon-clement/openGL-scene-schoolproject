@@ -1,4 +1,5 @@
 from src.vertexArray import VertexArray
+import glfw                         # lean window system wrapper for OpenGL
 from src.shader import *
 import src
 from src.node import Node, SkinningControlNode
@@ -187,40 +188,45 @@ class ParticleMesh:
 
     def __init__(self, attributes, index):
         self.vertexArray = VertexArray(attributes, index)
-        self.number_particle = 1
+        self.number_particle = NUMBER_PARTICLES
+        self.time = 0
 
-    def set_number_of_particles(n):
+    """def set_number_of_particles(n):
         self.number_particle = n
+    """
 
     def draw(self, projection, view, model, shaders=None, color=(1,1,1,1), **param):
         shader = shaders[GEYSER_SHADER_ID]
-        GL.glEnable(GL.GL_CULL_FACE)
+        self.time = glfw.get_time()
+        #  GL.glEnable(GL.GL_CULL_FACE)
+        GL.glDepthMask(GL.GL_FALSE);
         GL.glEnable(GL.GL_BLEND)
         GL.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
-        GL.glDisable(GL.GL_DEPTH_TEST)
+        #TODO re-enable depth test but disable depth write ?
         GL.glUseProgram(shader.glid)
-        matrix_location = GL.glGetUniformLocation(shader.glid, 'matrix')
-
-        GL.glUniformMatrix4fv(matrix_location, 1, True,
-                              projection * view * model)
 
         viewMatrix_location = \
             GL.glGetUniformLocation(shader.glid, 'viewMatrix')
         projMatrix_location = \
             GL.glGetUniformLocation(shader.glid, 'projMatrix')
-        modelMatrix_location = \
-            GL.glGetUniformLocation(shader.glid, 'modelMatrix')
+        time_location = \
+            GL.glGetUniformLocation(shader.glid, 'time')
+        id_location = \
+            GL.glGetUniformLocation(shader.glid, 'id_particle')
+        height_location = \
+            GL.glGetUniformLocation(shader.glid, 'height_geyser')
 
-        GL.glUniformMatrix4fv(modelMatrix_location, 1, True,
-                              model)
         GL.glUniformMatrix4fv(viewMatrix_location, 1, True, view)
         GL.glUniformMatrix4fv(projMatrix_location, 1, True, projection)
+        GL.glUniform1f(time_location, self.time)
+        GL.glUniform1f(height_location, 4)
 
         for i in range(self.number_particle):
-            # TODO load i in the uniform variable
+            GL.glUniform1f(id_location, i)
             self.vertexArray.draw(GL.GL_TRIANGLES)
 
         GL.glDisable(GL.GL_CULL_FACE)
+        GL.glDepthMask(GL.GL_TRUE);
         GL.glDisable(GL.GL_BLEND)
         GL.glEnable(GL.GL_DEPTH_TEST)
 

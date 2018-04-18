@@ -77,53 +77,113 @@ void main() {
 }"""
 
 
-# ----------- TODO create shaders for geysers ------------
+# ----------- create shaders for geysers ------------
 # id is the id of the particle. We need to specify a position in the shader
 # that depends on time and on id 
 # (id will be the seed of a continuous random generator)
+# TODO faire une hauteur en parametre
+PARTICLE_PER_TIME = 40
+TIME_RISING = 1
+NUMBER_PARTICLES = 100
 
 GEYSER_PARTICLE_VERT = """#version 330 core
 layout(location = 0) in vec3 position;
-layout(location = 1) in vec3 normal;
-layout(location = 2) in vec2 uvCoords;
-out vec2 fragTexCoord;
 uniform mat4 viewMatrix;
-uniform mat4 modelMatrix;
 uniform mat4 projMatrix;
-uniform float time;
 uniform float id_particle;
-out vec3 outNormal;
+uniform float time;
+uniform float height_geyser;
+out vec3 cubePos;
 
-void main() {
-    fragTexCoord = uvCoords;
-    gl_Position = projMatrix * viewMatrix * modelMatrix * vec4(position, 1);
-    mat4 modV = viewMatrix * modelMatrix;
-    mat3 M = mat3(vec3(modV[0]), vec3(modV[1]), vec3(modV[2]));
-    outNormal = transpose(inverse(M)) * normal;
+vec3 echelle(float temps_propre) {
+    float first_scale = 6;
+    vec3 base = vec3(sin(id_particle) + 0.2,
+                cos(id_particle) + 0.2,
+                sin(id_particle+3.14/4) + 0.2);
+    return base * max(first_scale,
+                    first_scale + temps_propre - %(time_rising)f );
 }
-"""
+
+vec3 position_particle(float temps_propre) {
+    const vec2 dir_vent = vec2(0.3, 0.2);
+    float vitesse_propre_vertical = 2.5 + sin(id_particle*78)/5;
+    const float time_rising = %(time_rising)f;
+    float time_borne = min(temps_propre, time_rising); 
+    float cste_hauteur_max = height_geyser *
+            (%(number_particles)f - id_particle) /
+            (%(particle_per_time)f * time_rising);
+    float pos_z = cste_hauteur_max * time_borne * (time_rising * time_rising - time_borne*time_borne/3) - 4;
+    float vitesse_propre_horizontal = 6.5 + sin(id_particle*28);
+    return vec3(vitesse_propre_horizontal * dir_vent * temps_propre,
+            pos_z);
+}
+
+
+mat4 rotationMatrix(vec3 axis, float angle)
+{
+    axis = normalize(axis);
+    float s = sin(angle);
+    float c = cos(angle);
+    float oc = 1.0 - c;
+    
+    return mat4(oc * axis.x * axis.x + c, oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,
+            oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c, oc * axis.y * axis.z - axis.x * s,  0.0,
+            oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c, 0.0,
+            0.0, 0.0, 0.0, 1.0);
+                                                        }
+void main() {
+    cubePos = position;
+    vec4 pos;
+
+    float temps_propre = max(time-id_particle/%(particle_per_time)f,0);
+
+    pos.xyz = position.xyz * echelle(temps_propre);
+    pos.w = 1;
+
+    float rand1 = sin(id_particle * 100);
+    float rand2 = cos(id_particle * 100);
+    float rand3 = sin(id_particle * 200);
+    vec3 axis = vec3(rand1, rand2, rand3);
+    pos = rotationMatrix(axis, 0.8) * pos;
+
+    pos.xyz = pos.xyz + position_particle(temps_propre);
+
+    gl_Position = projMatrix * viewMatrix * pos;
+}
+""" % {"particle_per_time" : PARTICLE_PER_TIME, 
+        "time_rising" : TIME_RISING,
+        "number_particles" : NUMBER_PARTICLES}
 
 GEYSER_PARTICLE_FRAG = """#version 330 core
-in vec3 outNormal;
-in vec2 fragTexCoord;
+in vec3 cubePos;
 out vec4 color;
-uniform vec3 view;
+uniform float id_particle;
+uniform float time;
 
-float rand(vec2 co){
-    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+float transparence(vec3 pos, float temps_propre){
+    float rayon = 0.5 + sin(id_particle + time) / 5;
+    float distance_centre = (length(pos) - 1) / (sqrt(3.) - 1);
+    if (distance_centre > rayon) {
+        return 0;
+    } else {
+        float tps_montee = %(time_rising)f;
+        float fading = max(0, temps_propre - tps_montee);
+        return exp(-0.4*fading - 1 - 1/(1 - distance_centre/rayon));
+    }
 }
 
 void main() {
-    vec3 normal = normalize(outNormal);
-    vec3 l = vec3(0, 0, 1);
-    float blank = rand(fragTexCoord)/2;
-    vec4 ambiant = vec4(0.1,0,0,blank);
-    vec4 col = vec4(1, 1, 1, blank);
-    float dotP = max(0, dot(normal, l));
-    color = col*dotP + ambiant;
+    float temps_propre = time-id_particle/%(particle_per_time)f;
+    if (temps_propre < 0) {
+        discard;
+    }
+    float blank = transparence(cubePos, temps_propre);
+    vec4 col = vec4(0.3, 1, 0.3, blank);
+    color = col;
 }
 
-"""
+""" % {"particle_per_time" : PARTICLE_PER_TIME, 
+        "time_rising" : TIME_RISING}
 
 # ------------  Simple color shaders ------------------------------------------
 COLOR_VERT = """#version 330 core

@@ -11,6 +11,10 @@ class GLFWTrackball(Trackball):
         super().__init__()
         self.angle_z = (bornes_rotate[0] + bornes_rotate[1])/2
         self.distance = (bornes_zoom[0] + bornes_zoom[1]) / 3
+
+        self.angle_z = bornes_rotate[0]
+        self.distance = bornes_zoom[1]
+
         self.bornes_zoom = bornes_zoom
         self.bornes_rotate = bornes_rotate
         self.mouse = (0, 0)
