@@ -78,13 +78,12 @@ void main() {
 
 
 # ----------- create shaders for geysers ------------
-# id is the id of the particle. We need to specify a position in the shader
+# id is the id of the particle. We need to specify a position/scale_transparency in the shader
 # that depends on time and on id 
-# (id will be the seed of a continuous random generator)
-# TODO faire une hauteur en parametre
-PARTICLE_PER_TIME = 40
-TIME_RISING = 1
-NUMBER_PARTICLES = 100
+# (id will be more or less the seed of a continuous random generator)
+PARTICLE_PER_TIME = 250
+TIME_RISING = 0.401
+NUMBER_PARTICLES = 150
 
 GEYSER_PARTICLE_VERT = """#version 330 core
 layout(location = 0) in vec3 position;
@@ -96,26 +95,25 @@ uniform float height_geyser;
 out vec3 cubePos;
 
 vec3 echelle(float temps_propre) {
-    float first_scale = 6;
-    vec3 base = vec3(sin(id_particle) + 0.2,
-                cos(id_particle) + 0.2,
-                sin(id_particle+3.14/4) + 0.2);
-    return base * max(first_scale,
-                    first_scale + temps_propre - %(time_rising)f );
+    float first_scale = 1.5;
+    vec3 base = vec3(sin(id_particle) + 1.1,
+                cos(id_particle) + 1.1,
+                sin(id_particle+3.14/4) + 1.2);
+    return base * pow(first_scale + temps_propre, 1.3);
 }
 
 vec3 position_particle(float temps_propre) {
     const vec2 dir_vent = vec2(0.3, 0.2);
-    float vitesse_propre_vertical = 2.5 + sin(id_particle*78)/5;
+    float vitesse_propre_horizontal = 8.5 + 4 * sin(id_particle*28);
+    vec2 depl_h = vitesse_propre_horizontal * dir_vent * temps_propre;
+
     const float time_rising = %(time_rising)f;
-    float time_borne = min(temps_propre, time_rising); 
+    float time_borne = min(temps_propre, time_rising) / time_rising;
     float cste_hauteur_max = height_geyser *
-            (%(number_particles)f - id_particle) /
-            (%(particle_per_time)f * time_rising);
-    float pos_z = cste_hauteur_max * time_borne * (time_rising * time_rising - time_borne*time_borne/3) - 4;
-    float vitesse_propre_horizontal = 6.5 + sin(id_particle*28);
-    return vec3(vitesse_propre_horizontal * dir_vent * temps_propre,
-            pos_z);
+            ((%(number_particles)f - id_particle) / (%(number_particles)f));
+            //(%(particle_per_time)f * %(time_rising)f));
+    float pos_z = time_borne * abs(sin(91 * id_particle)) * cste_hauteur_max * (0.9 - time_borne*time_borne/3) - 4;
+    return vec3(depl_h, pos_z);
 }
 
 
@@ -166,19 +164,18 @@ float transparence(vec3 pos, float temps_propre){
     if (distance_centre > rayon) {
         return 0;
     } else {
-        float tps_montee = %(time_rising)f;
-        float fading = max(0, temps_propre - tps_montee);
-        return exp(-0.4*fading - 1 - 1/(1 - distance_centre/rayon));
+        float fading = max(0, time - %(time_rising)f);
+        return exp(-0.1*fading - 1 - 1/(1 - distance_centre/rayon));
     }
 }
 
 void main() {
-    float temps_propre = time-id_particle/%(particle_per_time)f;
+    float temps_propre = (time-id_particle/%(particle_per_time)f)/%(time_rising)f;
     if (temps_propre < 0) {
         discard;
     }
     float blank = transparence(cubePos, temps_propre);
-    vec4 col = vec4(0.3, 1, 0.3, blank);
+    vec4 col = vec4(0.8, 1, 0.8, blank);
     color = col;
 }
 

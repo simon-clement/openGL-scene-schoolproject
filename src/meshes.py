@@ -219,7 +219,7 @@ class ParticleMesh:
         GL.glUniformMatrix4fv(viewMatrix_location, 1, True, view)
         GL.glUniformMatrix4fv(projMatrix_location, 1, True, projection)
         GL.glUniform1f(time_location, self.time)
-        GL.glUniform1f(height_location, 4)
+        GL.glUniform1f(height_location, 40)
 
         for i in range(self.number_particle):
             GL.glUniform1f(id_location, i)
