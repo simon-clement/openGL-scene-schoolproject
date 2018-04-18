@@ -81,9 +81,9 @@ void main() {
 # id is the id of the particle. We need to specify a position/scale_transparency in the shader
 # that depends on time and on id 
 # (id will be more or less the seed of a continuous random generator)
-PARTICLE_PER_TIME = 250
+PARTICLE_PER_TIME = 400
 TIME_RISING = 0.401
-NUMBER_PARTICLES = 150
+NUMBER_PARTICLES = 200
 
 GEYSER_PARTICLE_VERT = """#version 330 core
 layout(location = 0) in vec3 position;
@@ -165,7 +165,7 @@ float transparence(vec3 pos, float temps_propre){
         return 0;
     } else {
         float fading = max(0, time - %(time_rising)f);
-        return exp(-0.1*fading - 1 - 1/(1 - distance_centre/rayon));
+        return exp(-fading - 1 - 1/(1 - distance_centre/rayon));
     }
 }
 

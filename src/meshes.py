@@ -189,20 +189,22 @@ class ParticleMesh:
     def __init__(self, attributes, index):
         self.vertexArray = VertexArray(attributes, index)
         self.number_particle = NUMBER_PARTICLES
-        self.time = 0
+        self.geysers = []
 
     """def set_number_of_particles(n):
         self.number_particle = n
     """
 
+    def new_geyser(self, charge):
+        self.geysers += [(glfw.get_time(), charge)]
+        print(len(self.geysers))
+
     def draw(self, projection, view, model, shaders=None, color=(1,1,1,1), **param):
         shader = shaders[GEYSER_SHADER_ID]
-        self.time = glfw.get_time()
-        #  GL.glEnable(GL.GL_CULL_FACE)
-        GL.glDepthMask(GL.GL_FALSE);
+        time = glfw.get_time()
         GL.glEnable(GL.GL_BLEND)
         GL.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
-        #TODO re-enable depth test but disable depth write ?
+        GL.glDepthMask(GL.GL_FALSE);
         GL.glUseProgram(shader.glid)
 
         viewMatrix_location = \
@@ -218,12 +220,20 @@ class ParticleMesh:
 
         GL.glUniformMatrix4fv(viewMatrix_location, 1, True, view)
         GL.glUniformMatrix4fv(projMatrix_location, 1, True, projection)
-        GL.glUniform1f(time_location, self.time)
-        GL.glUniform1f(height_location, 40)
 
-        for i in range(self.number_particle):
-            GL.glUniform1f(id_location, i)
-            self.vertexArray.draw(GL.GL_TRIANGLES)
+        to_remove = []
+
+        for index, (offset, charge) in enumerate(self.geysers):
+            GL.glUniform1f(time_location, time - offset)
+            GL.glUniform1f(height_location, charge)
+
+            for i in range(self.number_particle):
+                GL.glUniform1f(id_location, i)
+                self.vertexArray.draw(GL.GL_TRIANGLES)
+            if time- offset > 5:
+                to_remove += [index]
+        for j, i in enumerate(to_remove):
+            self.geysers.pop(i - j)
 
         GL.glDisable(GL.GL_CULL_FACE)
         GL.glDepthMask(GL.GL_TRUE);

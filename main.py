@@ -33,7 +33,7 @@ def main():
     """ create a window, add scene objects, then run rendering loop """
     viewer = Viewer()
     viewer.add(load_with_hierarchy("sol.dae")[0])
-    viewer.add(load_for_particle("cube_particle.dae")[0])
+    viewer.setParticleGeyser(load_for_particle("cube_particle.dae")[0])
 
     # Sky box :
     # viewer.add(load_skybox("sphere.dae", "ciel.jpg"))

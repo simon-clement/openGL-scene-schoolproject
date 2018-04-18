@@ -29,6 +29,8 @@ class Viewer:
         glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
         glfw.window_hint(glfw.RESIZABLE, False)
         self.win = glfw.create_window(width, height, 'Viewer', None, None)
+        self.offset_time_for_loading = 0
+        self.is_charging_geyser = False
 
         self.trackball = GLFWTrackball(self.win)
         # make win's OpenGL context current; no OpenGL calls can happen before
@@ -57,6 +59,7 @@ class Viewer:
         print("SHADER GEYSER : ", self.shaders[GEYSER_SHADER_ID])
         self.shaders[LAMBERTIAN_SHADER_ID] = self.lambertian_shader
         self.shaders[COLOR_SHADER_ID] = self.color_shader
+        self.particle_system = None
 
         # initially empty list of object to draw
         self.drawables = []
@@ -80,6 +83,10 @@ class Viewer:
                               shaders=self.shaders, win=self.win,
                               view_vector=view_vec)
 
+            if self.particle_system is not None:
+                self.particle_system.draw(projection, view, ModelMat,
+                              shaders=self.shaders, win=self.win,
+                              view_vector=view_vec)
             # flush render commands, and swap draw buffers
             glfw.swap_buffers(self.win)
 
@@ -90,10 +97,20 @@ class Viewer:
         """ add objects to draw in this window """
         self.drawables.extend(drawables)
 
+    def setParticleGeyser(self, particle_system):
+        self.particle_system = particle_system
+
     def on_key(self, _win, key, _scancode, action, _mods):
         """ 'Q' or 'Escape' quits """
         if action == glfw.PRESS or action == glfw.REPEAT:
             if key == glfw.KEY_ESCAPE or key == glfw.KEY_Q:
                 glfw.set_window_should_close(self.win, True)
-            if key == glfw.KEY_SPACE:
-                glfw.set_time(0)
+            if key == glfw.KEY_SPACE and action == glfw.PRESS:
+                self.offset_time_for_loading = glfw.get_time()
+                self.is_charging_geyser = True
+
+        elif action == glfw.RELEASE:
+            if key == glfw.KEY_SPACE and self.is_charging_geyser:
+                self.is_charging_geyser = False
+                charge = max(min(250*(glfw.get_time() - self.offset_time_for_loading), 70),20)
+                self.particle_system.new_geyser(charge)
