@@ -162,7 +162,7 @@ float transparence(vec3 pos, float temps_propre){
     float rayon = 0.5 + sin(id_particle + time) / 5;
     float distance_centre = (length(pos) - 1) / (sqrt(3.) - 1);
     if (distance_centre > rayon) {
-        return 0;
+        return 0.0;
     } else {
         float fading = max(0, time - %(time_rising)f);
         return exp(-fading - 1 - 1/(1 - distance_centre/rayon));

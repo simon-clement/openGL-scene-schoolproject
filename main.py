@@ -34,7 +34,7 @@ def main():
     viewer = Viewer()
     viewer.add(load_with_hierarchy("sol.dae")[0])
     viewer.setParticleGeyser(load_for_particle("cube_particle.dae")[0])
-    viewer.add(load_skinned("dinoPlateforme.dae")[0])
+    #viewer.add(load_skinned("dinoPlateforme.dae")[0])
 
     # Sky box :
     # viewer.add(load_skybox("sphere.dae", "ciel.jpg"))
