@@ -26,6 +26,7 @@ from src.viewer import Viewer
 from src.interaction import GLFWTrackball
 from src.loaders import load_skinned, load_skybox, load_with_hierarchy, \
     load_for_particle
+from src.dino import Dino
 
 
 # -------------- main program and scene setup --------------------------------
@@ -33,8 +34,8 @@ def main():
     """ create a window, add scene objects, then run rendering loop """
     viewer = Viewer()
     viewer.add(load_with_hierarchy("sol.dae")[0])
-    viewer.setParticleGeyser(load_for_particle("cube_particle.dae")[0])
-    #viewer.add(load_skinned("dinoPlateforme.dae")[0])
+    viewer.add_element_interacting(load_for_particle("cube_particle.dae")[0])
+    viewer.add_element_interacting(Dino(load_skinned("dinoPlateforme.dae")[0]))
 
     # Sky box :
     # viewer.add(load_skybox("sphere.dae", "ciel.jpg"))

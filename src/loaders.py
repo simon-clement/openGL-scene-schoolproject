@@ -46,8 +46,6 @@ def load_skinned(file):
     def make_nodes(pyassimp_node):
         """ Recursively builds nodes for our graph, matching pyassimp nodes """
         trs_keyframes = transform_keyframes.get(pyassimp_node.name, (None,))
-        print(trs_keyframes)
-
         node = SkinningControlNode(*trs_keyframes, name=pyassimp_node.name,
                                    transform=pyassimp_node.transformation)
         nodes[pyassimp_node.name] = node, pyassimp_node
@@ -74,10 +72,15 @@ def load_skinned(file):
         bone_offsets = [bone.offsetmatrix for bone in mesh.bones]
 
         # initialize skinned mesh and store in pyassimp_mesh for node addition
-        mesh.skinned_mesh = SkinnedMesh(
+        if len(bone_nodes) == 0:
+            #  not skinned
+            mesh.skinned_mesh = PhongMesh([mesh.vertices, mesh.normals], \
+                                          mesh.faces)
+        else:
+            mesh.skinned_mesh = SkinnedMesh(
                 [mesh.vertices, mesh.normals, v_bone['id'], v_bone['weight']],
                 bone_nodes, bone_offsets, mesh.faces
-        )
+            )
 
     # ------ add each mesh to its intended nodes as indicated by assimp
     for final_node, assimp_node in nodes.values():
