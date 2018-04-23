@@ -46,6 +46,7 @@ def load_skinned(file):
     def make_nodes(pyassimp_node):
         """ Recursively builds nodes for our graph, matching pyassimp nodes """
         trs_keyframes = transform_keyframes.get(pyassimp_node.name, (None,))
+        print(trs_keyframes)
 
         node = SkinningControlNode(*trs_keyframes, name=pyassimp_node.name,
                                    transform=pyassimp_node.transformation)
