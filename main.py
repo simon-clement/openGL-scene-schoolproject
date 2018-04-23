@@ -25,19 +25,22 @@ from src.node import *
 from src.viewer import Viewer
 from src.interaction import GLFWTrackball
 from src.loaders import load_skinned, load_skybox, load_with_hierarchy, \
-    load_for_particle
+    load_for_particle, load_textured
 
 
 # -------------- main program and scene setup --------------------------------
 def main():
     """ create a window, add scene objects, then run rendering loop """
     viewer = Viewer()
+
+    # Sky box :
+    viewer.add(load_skybox("sphere.dae", "ciel.jpg"))
+
     viewer.add(load_with_hierarchy("sol.dae")[0])
     viewer.setParticleGeyser(load_for_particle("cube_particle.dae")[0])
     #viewer.add(load_skinned("dinoPlateforme.dae")[0])
 
-    # Sky box :
-    # viewer.add(load_skybox("sphere.dae", "ciel.jpg"))
+
 
     # if len(sys.argv) < 2:
     #     print('Cylinder skinning demo.')

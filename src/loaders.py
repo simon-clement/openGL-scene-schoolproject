@@ -212,27 +212,31 @@ def load_with_hierarchy(file):
     pyassimp.release(scene)
     return [root_node]
 
-def load_skybox(sphere, texture):
+def load_skybox(sphere, ma_texture):
     """ load skybox 'sphere' with sky texture 'texture' """
 
-    # fichier sphere valide :
     try:
         option = pyassimp.postprocess.aiProcessPreset_TargetRealtime_MaxQuality
         scene = pyassimp.load(sphere, option)
     except pyassimp.errors.AssimpError:
         print('ERROR: pyassimp unable to load', sphere)
-        return []     # error reading => return empty list
-    # fichier txture valide :
-    try:
-        option = pyassimp.postprocess.aiProcessPreset_TargetRealtime_MaxQuality
-        scene = pyassimp.load(texture, option)
-    except pyassimp.errors.AssimpError:
-        print('ERROR: pyassimp unable to load', texture)
         return []  # error reading => return empty list
 
-    meshes = [SkyBoxMesh(texture, [m.vertices, m.normals], m.faces) for m in scene.meshes]
+    # Ajout de la texture
+    for mat in scene.materials:
+        mat.texture = Texture(ma_texture)
+
+
+    # prepare textured mesh
+    meshes = []
+    for mesh in scene.meshes:
+        texture = scene.materials[mesh.materialindex].texture
+
+        # create the textured mesh object from texture, attributes, and indices
+        meshes.append(SkyBoxMesh(texture, [mesh.vertices], mesh.faces))
+
     size = sum((mesh.faces.shape[0] for mesh in scene.meshes))
-    print('Loaded %s\t(%d meshes, %d faces)' % (file, len(scene.meshes), size))
+    print('Loaded %s\t(%d meshes, %d faces)' % (sphere, len(scene.meshes), size))
 
     pyassimp.release(scene)
-    return meshes
+    return meshes[0]

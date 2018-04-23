@@ -5,6 +5,8 @@ import os                           # os function, i.e. checking file status
 GEYSER_SHADER_ID = 0
 LAMBERTIAN_SHADER_ID = 1
 COLOR_SHADER_ID = 2
+SKYBOX_SHADER_ID = 3
+
 class Shader:
     """ Helper class to create and automatically destroy shader program """
     @staticmethod
@@ -79,7 +81,7 @@ void main() {
 
 # ----------- create shaders for geysers ------------
 # id is the id of the particle. We need to specify a position/scale_transparency in the shader
-# that depends on time and on id 
+# that depends on time and on id
 # (id will be more or less the seed of a continuous random generator)
 PARTICLE_PER_TIME = 400
 TIME_RISING = 0.401
@@ -123,7 +125,7 @@ mat4 rotationMatrix(vec3 axis, float angle)
     float s = sin(angle);
     float c = cos(angle);
     float oc = 1.0 - c;
-    
+
     return mat4(oc * axis.x * axis.x + c, oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,
             oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c, oc * axis.y * axis.z - axis.x * s,  0.0,
             oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c, 0.0,
@@ -148,7 +150,7 @@ void main() {
 
     gl_Position = projMatrix * viewMatrix * pos;
 }
-""" % {"particle_per_time" : PARTICLE_PER_TIME, 
+""" % {"particle_per_time" : PARTICLE_PER_TIME,
         "time_rising" : TIME_RISING,
         "number_particles" : NUMBER_PARTICLES}
 
@@ -179,7 +181,7 @@ void main() {
     color = col;
 }
 
-""" % {"particle_per_time" : PARTICLE_PER_TIME, 
+""" % {"particle_per_time" : PARTICLE_PER_TIME,
         "time_rising" : TIME_RISING}
 
 # ------------  Simple color shaders ------------------------------------------
@@ -238,7 +240,7 @@ void main() {
     // ------ compute world and normalized eye coordinates of our vertex
     vec4 wPosition4 = skinMatrix * vec4(position, 1.0);
     gl_Position = projection * view * wPosition4;
-    
+
     fragColor = color;
 }
 """ % (MAX_VERTEX_BONES, MAX_BONES)
@@ -264,3 +266,21 @@ void main() {
     outColor = texture(diffuseMap, fragTexCoord);
 }"""
 
+# -------------- skybox shaders----------------------------------
+SKYBOX_VERT = """#version 330 core
+uniform mat4 modelviewprojection;
+layout(location = 0) in vec3 position;
+out vec2 fragTexCoord;
+void main() {
+    vec4 position3D = modelviewprojection * vec4(position, 1);
+    gl_Position = position3D;
+    fragTexCoord = vec2(position3D[0], position3D[1]);
+}"""
+
+SKYBOX_FRAG = """#version 330 core
+uniform sampler2D diffuseMap;
+in vec2 fragTexCoord;
+out vec4 outColor;
+void main() {
+    outColor = texture(diffuseMap, fragTexCoord);
+}"""

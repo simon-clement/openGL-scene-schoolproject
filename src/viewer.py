@@ -54,11 +54,13 @@ class Viewer:
         self.color_shader = Shader(COLOR_VERT, COLOR_FRAG)
         self.lambertian_shader = Shader(LAMBERTIAN_VERT, LAMBERTIAN_FRAG)
         self.geyser_shader = Shader(GEYSER_PARTICLE_VERT, GEYSER_PARTICLE_FRAG)
+        self.skybox_shader = Shader(SKYBOX_VERT, SKYBOX_FRAG)
         self.shaders = {}
         self.shaders[GEYSER_SHADER_ID] = self.geyser_shader
         print("SHADER GEYSER : ", self.shaders[GEYSER_SHADER_ID])
         self.shaders[LAMBERTIAN_SHADER_ID] = self.lambertian_shader
         self.shaders[COLOR_SHADER_ID] = self.color_shader
+        self.shaders[SKYBOX_SHADER_ID] = self.skybox_shader
         self.particle_system = None
 
         # initially empty list of object to draw
