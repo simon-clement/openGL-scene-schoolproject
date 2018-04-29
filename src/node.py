@@ -14,13 +14,13 @@ class Node:
         """ Add drawables to this node, simply updating children list """
         self.children.extend(drawables)
 
-    def draw(self, projection, view, model, **param):
+    def draw(self, projection, view, model, time=None, **param):
         """ Recursive draw, passing down named parameters & model matrix. """
         # merge named parameters given at initialization with those given here
         param = dict(param, **self.param)
         model = model @ self.transform
         for child in self.children:
-            child.draw(projection, view, model, **param)
+            child.draw(projection, view, model, time=time, **param)
 
 
 class KeyFrameControlNode(Node):
@@ -29,10 +29,12 @@ class KeyFrameControlNode(Node):
         super().__init__(**kwargs)
         self.keyframes = TransformKeyFrames(translate_keys, rotate_keys, scale_keys)
 
-    def draw(self, projection, view, model, **param):
+    def draw(self, projection, view, model, time=None, **param):
         """ When redraw requested, interpolate our node transform from keys """
-        self.transform = self.keyframes.value(glfw.get_time())
-        super().draw(projection, view, model, **param)
+        if time is None:
+            time = glfw.get_time()
+        self.transform = self.keyframes.value(time)
+        super().draw(projection, view, model, time=time, **param)
 
 
 # -------- Skinning Control for Keyframing Skinning Mesh Bone Transforms ------
@@ -43,15 +45,17 @@ class SkinningControlNode(Node):
         self.keyframes = TransformKeyFrames(*keys) if keys[0] else None
         self.world_transform = identity()
 
-    def draw(self, projection, view, model, **param):
+    def draw(self, projection, view, model, time=None, **param):
         """ When redraw requested, interpolate our node transform from keys """
         if self.keyframes:  # no keyframe update should happens if no keyframes
-            self.transform = self.keyframes.value(glfw.get_time())
+            if time is None:
+                time = glfw.get_time()
+            self.transform = self.keyframes.value(time)
 
         # store world transform for skinned meshes using this node as bone
         self.world_transform = model @ self.transform
 
         # default node behaviour (call children's draw method)
-        super().draw(projection, view, model, **param)
+        super().draw(projection, view, model, time=time, **param)
 
 

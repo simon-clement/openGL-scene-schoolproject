@@ -56,12 +56,15 @@ class Viewer:
         self.color_shader = Shader(COLOR_VERT, COLOR_FRAG)
         self.lambertian_shader = Shader(LAMBERTIAN_VERT, LAMBERTIAN_FRAG)
         self.geyser_shader = Shader(GEYSER_PARTICLE_VERT, GEYSER_PARTICLE_FRAG)
+        self.skybox_shader = Shader(SKYBOX_VERT, SKYBOX_FRAG)
         self.shaders = {}
         self.shaders[GEYSER_SHADER_ID] = self.geyser_shader
         print("SHADER GEYSER : ", self.shaders[GEYSER_SHADER_ID])
         self.shaders[LAMBERTIAN_SHADER_ID] = self.lambertian_shader
         self.shaders[COLOR_SHADER_ID] = self.color_shader
+        self.shaders[SKYBOX_SHADER_ID] = self.skybox_shader
         self.particle_system = None
+        self.elements_interacting = []
 
         # initially empty list of object to draw
         self.drawables = []
@@ -85,8 +88,8 @@ class Viewer:
                               shaders=self.shaders, win=self.win,
                               view_vector=view_vec)
 
-            if self.particle_system is not None:
-                self.particle_system.draw(projection, view, ModelMat,
+            for elem_interact in self.elements_interacting:
+                elem_interact.draw(projection, view, ModelMat,
                               shaders=self.shaders, win=self.win,
                               view_vector=view_vec)
             # flush render commands, and swap draw buffers
@@ -99,8 +102,8 @@ class Viewer:
         """ add objects to draw in this window """
         self.drawables.extend(drawables)
 
-    def setParticleGeyser(self, particle_system):
-        self.particle_system = particle_system
+    def add_element_interacting(self, elem_interact):
+        self.elements_interacting += [elem_interact]
 
     def on_key(self, _win, key, _scancode, action, _mods):
         """ 'Q' or 'Escape' quits """
@@ -115,4 +118,5 @@ class Viewer:
             if key == glfw.KEY_SPACE and self.is_charging_geyser:
                 self.is_charging_geyser = False
                 charge = max(min(250*(glfw.get_time() - self.offset_time_for_loading), 70),20)
-                self.particle_system.new_geyser(charge)
+                for elem_interact in self.elements_interacting:
+                    elem_interact.new_geyser(charge)

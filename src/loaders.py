@@ -46,8 +46,6 @@ def load_skinned(file):
     def make_nodes(pyassimp_node):
         """ Recursively builds nodes for our graph, matching pyassimp nodes """
         trs_keyframes = transform_keyframes.get(pyassimp_node.name, (None,))
-        print(trs_keyframes)
-
         node = SkinningControlNode(*trs_keyframes, name=pyassimp_node.name,
                                    transform=pyassimp_node.transformation)
         nodes[pyassimp_node.name] = node, pyassimp_node
@@ -74,10 +72,15 @@ def load_skinned(file):
         bone_offsets = [bone.offsetmatrix for bone in mesh.bones]
 
         # initialize skinned mesh and store in pyassimp_mesh for node addition
-        mesh.skinned_mesh = SkinnedMesh(
+        if len(bone_nodes) == 0:
+            #  not skinned
+            mesh.skinned_mesh = PhongMesh([mesh.vertices, mesh.normals], \
+                                          mesh.faces)
+        else:
+            mesh.skinned_mesh = SkinnedMesh(
                 [mesh.vertices, mesh.normals, v_bone['id'], v_bone['weight']],
                 bone_nodes, bone_offsets, mesh.faces
-        )
+            )
 
     # ------ add each mesh to its intended nodes as indicated by assimp
     for final_node, assimp_node in nodes.values():
@@ -212,27 +215,31 @@ def load_with_hierarchy(file):
     pyassimp.release(scene)
     return [root_node]
 
-def load_skybox(sphere, texture):
+def load_skybox(sphere, ma_texture):
     """ load skybox 'sphere' with sky texture 'texture' """
 
-    # fichier sphere valide :
     try:
         option = pyassimp.postprocess.aiProcessPreset_TargetRealtime_MaxQuality
         scene = pyassimp.load(sphere, option)
     except pyassimp.errors.AssimpError:
         print('ERROR: pyassimp unable to load', sphere)
-        return []     # error reading => return empty list
-    # fichier txture valide :
-    try:
-        option = pyassimp.postprocess.aiProcessPreset_TargetRealtime_MaxQuality
-        scene = pyassimp.load(texture, option)
-    except pyassimp.errors.AssimpError:
-        print('ERROR: pyassimp unable to load', texture)
         return []  # error reading => return empty list
 
-    meshes = [SkyBoxMesh(texture, [m.vertices, m.normals], m.faces) for m in scene.meshes]
+    # Ajout de la texture
+    for mat in scene.materials:
+        mat.texture = Texture(ma_texture)
+
+
+    # prepare textured mesh
+    meshes = []
+    for mesh in scene.meshes:
+        texture = scene.materials[mesh.materialindex].texture
+
+        # create the textured mesh object from texture, attributes, and indices
+        meshes.append(SkyBoxMesh(texture, [mesh.vertices], mesh.faces))
+
     size = sum((mesh.faces.shape[0] for mesh in scene.meshes))
-    print('Loaded %s\t(%d meshes, %d faces)' % (file, len(scene.meshes), size))
+    print('Loaded %s\t(%d meshes, %d faces)' % (sphere, len(scene.meshes), size))
 
     pyassimp.release(scene)
-    return meshes
+    return meshes[0]

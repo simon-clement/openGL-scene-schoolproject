@@ -6,22 +6,21 @@ from src.node import Node, SkinningControlNode
 
 # -------------- Sky box mesh -------------------------------------------------
 class SkyBoxMesh():
-    """ """
-    def __init__(self, texture, attributes, shader, index=None):
+    """ skybox """
+    def __init__(self, texture, attributes, index=None):
         self.vertex_array = VertexArray(attributes, index)
-        self.shader = shader
         self.texture = texture
 
-    def draw(self, projection, view, model, win=None, **_kwargs):
-
-        GL.glUseProgram(self.shader.glid)
+    def draw(self, projection, view, model, shaders, win=None, **_kwargs):
+        shader = shaders[SKYBOX_SHADER_ID]
+        GL.glUseProgram(shader.glid)
 
         # projection geometry
-        loc = GL.glGetUniformLocation(self.shader.glid, 'modelviewprojection')
+        loc = GL.glGetUniformLocation(shader.glid, 'modelviewprojection')
         GL.glUniformMatrix4fv(loc, 1, True, projection @ view @ model)
 
         # texture access setups
-        loc = GL.glGetUniformLocation(self.shader.glid, 'diffuseMap')
+        loc = GL.glGetUniformLocation(shader.glid, 'diffuseMap')
         GL.glActiveTexture(GL.GL_TEXTURE0)
         GL.glBindTexture(GL.GL_TEXTURE_2D, self.texture.glid)
         GL.glUniform1i(loc, 0)
