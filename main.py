@@ -36,7 +36,7 @@ def main():
     viewer = Viewer()
 
     # Sky box :
-    viewer.add(load_skybox("sphere.dae", "ciel.png"))
+    viewer.add(load_skybox("sphere.dae", "ciel2.png"))
 
     viewer.add(load_with_hierarchy("sol.dae")[0])
     viewer.add_element_interacting(Dino(load_skinned("dinoPlateforme.dae")[0]))
