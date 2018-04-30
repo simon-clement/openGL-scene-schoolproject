@@ -280,7 +280,7 @@ void main() {
     // distance sur la texture (longitude)= (angle/(2*pi)) * 2pi*r
     float rayon = sqrt(pow(position[0],2) + pow(position[2],2));
     float latitude =  - (position[1]/2 - 0.5);
-    float longitude = atan(position[2]/(position[0]+1)) *2*rayon;
+    float longitude = atan(abs(position[2])/abs((position[0]+1))) *2*rayon;
     fragTexCoord = vec2(longitude, latitude);
 }"""
 
