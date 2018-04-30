@@ -83,13 +83,12 @@ class Viewer:
             if self.skybox is None:
                 GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
             else:
-                GL.glDisable(GL.GL_DEPTH_TEST)
+                GL.glClear(GL.GL_DEPTH_BUFFER_BIT)  # TODO enlever depth test pour le remettre
                 view_skybox = self.trackball.view_matrix_skybox(100)
                 #TODO mettre la distance ici
                 self.skybox.draw(projection, view_skybox, ModelMat,
                               shaders=self.shaders, win=self.win,
                               view_vector=view_vec)
-                GL.glEnable(GL.GL_DEPTH_TEST)
 
             # draw our scene objects
             for drawable in self.drawables:
