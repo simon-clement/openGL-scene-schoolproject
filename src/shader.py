@@ -272,9 +272,13 @@ uniform mat4 modelviewprojection;
 layout(location = 0) in vec3 position;
 out vec2 fragTexCoord;
 void main() {
-    vec4 position3D = modelviewprojection * vec4(position, 1);
+    vec3 position2 = position*10; // taille sphere * 1000
+    vec4 position3D = modelviewprojection * vec4(position2, 1);
     gl_Position = position3D;
-    fragTexCoord = vec2(position3D[0], position3D[1]);
+    // rayon courant = sqrt(x**2 + y**2)
+    // angle courant =
+    // distance sur la texture = angle/total * 2pi*r
+    fragTexCoord = vec2(position3D[0], - position3D[2]);
 }"""
 
 SKYBOX_FRAG = """#version 330 core
