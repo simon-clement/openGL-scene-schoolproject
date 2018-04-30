@@ -186,7 +186,7 @@ class Trackball:
     def __init__(self, yaw=0., roll=0., pitch=0., distance=3., radians=None):
         """ Build a new trackball with specified view, angles in degrees """
         self.rotation = quaternion_from_euler(yaw, roll, pitch, radians)
-        self.distance = max(distance, 0.001)
+        self.distance = max(distance, 0.01)
         self.target_point = vec(0.0, 0.0, 0.0)
         self.angle_z = 0
         self.angle_xy = 0
@@ -219,10 +219,10 @@ class Trackball:
         return lookat(eye, self.target_point, np.cross(direction, to_cross))
         # return translate(*self.target_point, -self.distance) @ self.matrix()
 
-    def view_matrix_skybox(self):
+    def view_matrix_skybox(self, distance):
         """ View matrix transformation, including distance to target point """
         direction = normalized(self.view_vector())
-        eye = self.target_point - 1 * direction
+        eye = self.target_point - distance * direction  # TODO changer le 100
         to_cross = vec((math.sin(self.angle_xy),-math.cos(self.angle_xy)))
         return lookat(eye, self.target_point, np.cross(direction, to_cross))
         # return translate(*self.target_point, -self.distance) @ self.matrix()
