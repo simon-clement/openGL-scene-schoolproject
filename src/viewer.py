@@ -28,6 +28,7 @@ class Viewer:
         glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, GL.GL_TRUE)
         glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
         glfw.window_hint(glfw.RESIZABLE, False)
+        glfw.window_hint(glfw.SAMPLES, 4) # MSAA: color buffer contains 4 subsamples per screen coordinate (all buffers size are increased by 4)
         self.win = glfw.create_window(width, height, 'Viewer', None, None)
         self.offset_time_for_loading = 0
         self.is_charging_geyser = False
@@ -48,6 +49,7 @@ class Viewer:
         GL.glClearColor(0.1, 0.1, 0.1, 0.1)
 
         # GL.glEnable(GL.GL_CULL_FACE)
+        GL.glEnable(GL.GL_MULTISAMPLE) # MSAA: Enable multisampling
         GL.glEnable(GL.GL_DEPTH_TEST)
 
         # compile and initialize shader programs once globally
