@@ -32,6 +32,7 @@ class Viewer:
         self.win = glfw.create_window(width, height, 'Viewer', None, None)
         self.offset_time_for_loading = 0
         self.is_charging_geyser = False
+        self.skybox = None
 
         self.trackball = GLFWTrackball(self.win)
         # make win's OpenGL context current; no OpenGL calls can happen before
@@ -71,17 +72,24 @@ class Viewer:
 
     def run(self):
         """ Main render loop for this OpenGL window """
-        mAngle = 0
         while not glfw.window_should_close(self.win):
             # clear draw buffer
-            GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
-            # mAngle += 0.01
-            ModelMat = np.matrix(rotate((1, 0, 1), mAngle)) * \
-                np.matrix(rotate(angle=92))
+            ModelMat = np.matrix(rotate(angle=90))
             winsize = glfw.get_window_size(self.win)
             view = self.trackball.view_matrix()
             view_vec = self.trackball.view_vector()
             projection = self.trackball.projection_matrix(winsize)
+
+            if self.skybox is None:
+                GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
+            else:
+                GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
+                view_skybox = self.trackball.view_matrix_skybox()
+                self.skybox.draw(projection, view_skybox, ModelMat,
+                              shaders=self.shaders, win=self.win,
+                              view_vector=view_vec)
+
+            """
             # draw our scene objects
             for drawable in self.drawables:
                 drawable.draw(projection, view, ModelMat,
@@ -93,6 +101,7 @@ class Viewer:
                               shaders=self.shaders, win=self.win,
                               view_vector=view_vec)
             # flush render commands, and swap draw buffers
+            """
             glfw.swap_buffers(self.win)
 
             # Poll for and process events
@@ -101,6 +110,9 @@ class Viewer:
     def add(self, *drawables):
         """ add objects to draw in this window """
         self.drawables.extend(drawables)
+
+    def set_skybox(self, drawable):
+        self.skybox = drawable
 
     def add_element_interacting(self, elem_interact):
         self.elements_interacting += [elem_interact]

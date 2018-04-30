@@ -219,6 +219,14 @@ class Trackball:
         return lookat(eye, self.target_point, np.cross(direction, to_cross))
         # return translate(*self.target_point, -self.distance) @ self.matrix()
 
+    def view_matrix_skybox(self):
+        """ View matrix transformation, including distance to target point """
+        direction = normalized(self.view_vector())
+        eye = self.target_point - 1 * direction
+        to_cross = vec((math.sin(self.angle_xy),-math.cos(self.angle_xy)))
+        return lookat(eye, self.target_point, np.cross(direction, to_cross))
+        # return translate(*self.target_point, -self.distance) @ self.matrix()
+
     def projection_matrix(self, winsize):
         """ Projection matrix with z-clipping range adaptive to distance """
         z_range = vec(0.1, 100) * self.distance  # proportion to dist
