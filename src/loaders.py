@@ -218,6 +218,7 @@ def load_with_hierarchy(file):
     root_node = make_nodes(scene.rootnode)
 
     path = os.path.dirname(file)
+    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA \n ", path)
     for mat in scene.materials:
         mat.tokens = dict(reversed(list(mat.properties.items())))
         if 'file' in mat.tokens:  # texture file token
