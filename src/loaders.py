@@ -71,10 +71,16 @@ def load_skinned(file):
         bone_nodes = [nodes[bone.name][0] for bone in mesh.bones]
         bone_offsets = [bone.offsetmatrix for bone in mesh.bones]
 
+        # prepare textured mesh
+        texture = scene.materials[mesh.materialindex].texture
+        # tex coords in raster order: compute 1 - y to follow OpenGL convention
+        tex_uv = ((0, 1) + mesh.texturecoords[0][:, :2] * (1, -1)
+                  if mesh.texturecoords.size else None)
+
         # initialize skinned mesh and store in pyassimp_mesh for node addition
         if len(bone_nodes) == 0:
             #  not skinned
-            mesh.skinned_mesh = PhongMesh([mesh.vertices, mesh.normals], \
+            mesh.skinned_mesh = PhongMesh(texture, [mesh.vertices, mesh.normals], \
                                           mesh.faces)
         else:
             mesh.skinned_mesh = SkinnedMesh(
@@ -181,7 +187,7 @@ def load_textured(file):
 
 
 
-def load_with_hierarchy(file, ma_texture):
+def load_with_hierarchy(file):
     """ load resources from file using pyassimp, return list of ColorMesh """
     nodes = {}  # nodes: string name -> node dictionary
     try:
@@ -207,7 +213,11 @@ def load_with_hierarchy(file, ma_texture):
 
     # ---- create ColorMesh objects
     for mesh in scene.meshes:
+        # prepare textured mesh
         texture = scene.materials[mesh.materialindex].texture
+        # tex coords in raster order: compute 1 - y to follow OpenGL convention
+        tex_uv = ((0, 1) + mesh.texturecoords[0][:, :2] * (1, -1)
+                  if mesh.texturecoords.size else None)
         # create the textured mesh object from texture, attributes, and indices
         mesh.loaded_mesh = PhongMesh(texture, [mesh.vertices, mesh.normals],
                                      mesh.faces)
