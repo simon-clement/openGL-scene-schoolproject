@@ -57,14 +57,17 @@ class Viewer:
         self.lambertian_shader = Shader(LAMBERTIAN_VERT, LAMBERTIAN_FRAG)
         self.geyser_shader = Shader(GEYSER_PARTICLE_VERT, GEYSER_PARTICLE_FRAG)
         self.skybox_shader = Shader(SKYBOX_VERT, SKYBOX_FRAG)
+        self.ui_shader = Shader(UI_VERT, UI_FRAG)
         self.shaders = {}
         self.shaders[GEYSER_SHADER_ID] = self.geyser_shader
         print("SHADER GEYSER : ", self.shaders[GEYSER_SHADER_ID])
         self.shaders[LAMBERTIAN_SHADER_ID] = self.lambertian_shader
-        self.shaders[COLOR_SHADER_ID] = self.color_shader
+        #  self.shaders[COLOR_SHADER_ID] = self.color_shader
         self.shaders[SKYBOX_SHADER_ID] = self.skybox_shader
+        self.shaders[UI_SHADER_ID] = self.ui_shader
         self.particle_system = None
         self.elements_interacting = []
+        self.elements_UI = []
 
         # initially empty list of object to draw
         self.drawables = []
@@ -92,6 +95,11 @@ class Viewer:
                 elem_interact.draw(projection, view, ModelMat,
                               shaders=self.shaders, win=self.win,
                               view_vector=view_vec)
+
+            for elem_ui in self.elements_UI:
+                elem_ui.draw(projection, view, ModelMat,
+                              shaders=self.shaders, win=self.win,
+                              view_vector=view_vec)
             # flush render commands, and swap draw buffers
             glfw.swap_buffers(self.win)
 
@@ -104,6 +112,9 @@ class Viewer:
 
     def add_element_interacting(self, elem_interact):
         self.elements_interacting += [elem_interact]
+
+    def add_UI(self, mesh):
+        self.elements_UI += [mesh]
 
     def on_key(self, _win, key, _scancode, action, _mods):
         """ 'Q' or 'Escape' quits """

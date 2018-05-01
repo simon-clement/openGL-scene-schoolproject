@@ -164,6 +164,20 @@ class PhongMesh:
         # draw triangle as GL_TRIANGLE vertex array, draw array call
         self.vertexArray.draw(GL.GL_TRIANGLES)
 
+class UIMesh:
+    """ Mesh Object, not loaded but created"""
+
+    def __init__(self, attributes, index=None):
+        self.vertexArray = VertexArray(attributes, index)
+
+    def draw(self, projection, view, model, shaders=None, color=(1,1,1,1), **param):
+        shader = shaders[UI_SHADER_ID]
+        GL.glUseProgram(shader.glid)
+
+        # draw triangle as GL_TRIANGLE vertex array, draw array call
+        self.vertexArray.draw(GL.GL_TRIANGLES)
+
+
 
 class ColorMesh:
     """ Mesh Object, loaded from obj file"""

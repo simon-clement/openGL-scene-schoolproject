@@ -27,6 +27,7 @@ from src.interaction import GLFWTrackball
 from src.loaders import load_skinned, load_skybox, load_with_hierarchy, \
     load_for_particle, load_textured
 from src.dino import Dino, Ptero
+from src.meshes import UIMesh
 
 
 
@@ -42,6 +43,15 @@ def main():
     viewer.add_element_interacting(Dino(load_skinned("dinoPlateforme.dae")[0]))
     viewer.add(Ptero(load_skinned("pterosaur.dae")[0]))
     viewer.add_element_interacting(load_for_particle("cube_particle.dae")[0])
+
+    vertices = np.array([0.1, 0.2, 0,
+                0.1, 0.5, 0,
+                0.2, 0.2, 0])
+    colors = np.array([0, 0, 1,
+              1, 0, 0,
+              0, 0, 1])
+    barre_chargement = UIMesh(np.array([vertices, colors]))
+    viewer.add_UI(barre_chargement)
 
 
 
