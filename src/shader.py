@@ -275,7 +275,7 @@ void main() {
 
     mat4 modV = view * skinMatrix;
     mat3 M = mat3(vec3(modV[0]), vec3(modV[1]), vec3(modV[2]));
-    outNormal = transpose(inverse(M)) * normal;
+    outNormal = transpose(inverse(M)) * normale;
     
     float latitude =  - (position[1]/2 - 0.5);
     float longitude = atan(abs(position[2])/abs((position[0])))*2 ;
