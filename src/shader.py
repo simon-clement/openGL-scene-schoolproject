@@ -272,9 +272,12 @@ uniform mat4 modelviewprojection;
 layout(location = 0) in vec3 position;
 out vec2 fragTexCoord;
 void main() {
-    vec4 position3D = modelviewprojection * vec4(position, 1);
+    vec3 position2 = position*1000; // taille sphere * 10000
+    vec4 position3D = modelviewprojection * vec4(position2, 1);
     gl_Position = position3D;
-    fragTexCoord = vec2(position3D[0], position3D[1]);
+    float latitude =  - (position[1]/2 - 0.5);
+    float longitude = atan(abs(position[2])/abs((position[0])))*2 ;
+    fragTexCoord = vec2(longitude, latitude);
 }"""
 
 SKYBOX_FRAG = """#version 330 core
