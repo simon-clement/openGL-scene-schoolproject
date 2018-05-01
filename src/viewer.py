@@ -67,14 +67,6 @@ class Viewer:
         self.particle_system = None
         self.elements_interacting = []
 
-        # Multisampled texture attachments (MSAA)
-        tex = GL.glGenTextures(1)
-        GL.glBindTexture(GL.GL_TEXTURE_2D_MULTISAMPLE, tex)
-        GL.glTexImage2DMultisample(GL.GL_TEXTURE_2D_MULTISAMPLE, new_sample,
-                                   GL.GL_RGB, width, height, GL.GL_TRUE)
-        # GL.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0,
-                                  # GL.GL_TEXTURE_2D_MULTISAMPLE, tex, 0)
-
         # initially empty list of object to draw
         self.drawables = []
 

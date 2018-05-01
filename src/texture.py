@@ -8,15 +8,17 @@ class Texture:
     def __init__(self, file, wrap_mode=GL.GL_REPEAT, min_filter=GL.GL_LINEAR,
                  mag_filter=GL.GL_LINEAR_MIPMAP_LINEAR):
         self.glid = GL.glGenTextures(1)
-        GL.glBindTexture(GL.GL_TEXTURE_2D, self.glid)
+        GL.glBindTexture(GL.GL_TEXTURE_2D_MULTISAMPLE, self.glid)
         # helper array stores texture format for every pixel size 1..4
         format = [GL.GL_LUMINANCE, GL.GL_LUMINANCE_ALPHA, GL.GL_RGB, GL.GL_RGBA]
         try:
             # imports image as a numpy array in exactly right format
             tex = np.array(Image.open(file))
             format = format[0 if len(tex.shape) == 2 else tex.shape[2] - 1]
-            GL.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, tex.shape[1],
-                            tex.shape[0], 0, format, GL.GL_UNSIGNED_BYTE, tex)
+            GL.glTexImage2DMultisample(GL.GL_TEXTURE_2D_MULTISAMPLE, 4,
+                                       GL.GL_RGB, 640, 480, GL.GL_TRUE)
+            GL.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0,
+                                      GL.GL_TEXTURE_2D_MULTISAMPLE, tex, 0)
 
             GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, wrap_mode)
             GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, wrap_mode)
