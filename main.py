@@ -28,6 +28,7 @@ from src.loaders import load_skinned, load_skybox, load_with_hierarchy, \
     load_for_particle, load_textured
 from src.dino import Dino, Ptero
 from src.arbre import Arbre
+from src.cylindre import Cylindre
 
 
 
@@ -44,7 +45,8 @@ def main():
     # viewer.add(Ptero(load_skinned("pterosaur.dae")[0]))
     # viewer.add_element_interacting(load_for_particle("cube_particle.dae")[0])
 
-    viewer.add(Arbre())
+    viewer.add_element_interacting(Dino(load_skinned("dinoPlateforme.dae")[0]))
+    viewer.add(Cylindre())
 
 
 
