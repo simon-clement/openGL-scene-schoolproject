@@ -20,8 +20,8 @@ def arbre(profondeur, cylindre, angle_x=0, angle_z=0):
     tronc.add(cylindre)
     if profondeur > 0:
         for i in range(4):
-            angle_zp = 6.3 * i / 4
-            angle_xp = 0.8
+            angle_zp = 6.3 * i / 4 + random() * 3.14 / 4
+            angle_xp = 0.6 + random() * 3.14 / 4
             tronc.add(arbre(profondeur - 1, cylindre, 
                 angle_xp, angle_zp))
 

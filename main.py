@@ -48,8 +48,10 @@ def main():
     viewer.add_element_interacting(Dino(load_skinned("dinoPlateforme.dae")[0]))
 
     cylindre = Cylindre()
-    arb1 = creer_arbre(10, 5, cylindre, (20, 0, 1))
+    arb1 = creer_arbre(10, 5, cylindre, (-20, 10, -20))
     viewer.add(arb1)
+    arb2 = creer_arbre(10, 5, cylindre, (0, 0, -30))
+    viewer.add(arb2)
 
 
 
