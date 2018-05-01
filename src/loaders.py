@@ -197,10 +197,6 @@ def load_with_hierarchy(file):
         print('ERROR: pyassimp unable to load', file)
         return []     # error reading => return empty list
     
-    # Ajout de la texture
-    for mat in scene.materials:
-        mat.texture = Texture(ma_texture)
-
     def make_nodes(pyassimp_node):
         """ Recursively builds nodes for our graph, matching pyassimp nodes """
         node = Node(name=pyassimp_node.name,
