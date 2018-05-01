@@ -78,9 +78,9 @@ void main() {
     vec4 ambiant = vec4(0.1,0,0,1);
     vec3 normal = normalize(outNormal);
     vec3 l = vec3(0, 0, 1);
-    vec4 col = vec4(1, 0.8, 0.6, 1);
+    vec4 col = texture(diffuseMap, fragTexCoord);
     float dotP = max(0, dot(normal, l));
-    outcolor = texture(diffuseMap, fragTexCoord);
+    outcolor = col*dotP + ambiant;
 }"""
 
 
