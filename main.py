@@ -27,6 +27,7 @@ from src.interaction import GLFWTrackball
 from src.loaders import load_skinned, load_skybox, load_with_hierarchy, \
     load_for_particle, load_textured
 from src.dino import Dino, Ptero
+from src.arbre import Arbre
 
 
 

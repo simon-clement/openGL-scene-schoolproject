@@ -5,6 +5,8 @@ Python OpenGL dinosaurus : sweet and flying with geysers
 
 import glfw                         # lean window system wrapper for OpenGL
 from src.transform import rotate, translate, scale
+from src.node import Node
+from src import Cylindre
 import math
 
 class Arbre:
