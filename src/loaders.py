@@ -54,18 +54,8 @@ def load_skinned(file):
 
     root_node = make_nodes(scene.rootnode)
 
-    path = os.path.dirname(file)
     for mat in scene.materials:
-        mat.tokens = dict(reversed(list(mat.properties.items())))
-        if 'file' in mat.tokens:  # texture file token
-            tname = mat.tokens['file'].split('/')[-1].split('\\')[-1]
-            # search texture in file's whole subdir since path often screwed up
-            tname = [os.path.join(d[0], f) for d in os.walk(path) for f in d[2]
-                     if tname.startswith(f) or f.startswith(tname)]
-            if tname:
-                mat.texture = Texture(tname[0])
-            else:
-                print('Failed to find texture:', tname)
+        mat.texture = Texture(mat.file)
 
     # ---- create SkinnedMesh objects
     for mesh in scene.meshes:
@@ -220,17 +210,8 @@ def load_with_hierarchy(file):
     path = os.path.dirname(file)
     
     for mat in scene.materials:
-        mat.tokens = dict(reversed(list(mat.properties.items())))
-        if 'file' in mat.tokens:  # texture file token
-            tname = mat.tokens['file'].split('/')[-1].split('\\')[-1]
-            # search texture in file's whole subdir since path often screwed up
-            tname = [os.path.join(d[0], f) for d in os.walk(path) for f in d[2]
-                     if tname.startswith(f) or f.startswith(tname)]
-            print(tname)
-            if tname:
-                mat.texture = Texture(tname[0])
-            else:
-                print('Failed to find texture:', tname)
+        mat.texture = Texture(mat.file)
+
 
     # ---- create ColorMesh objects
     for mesh in scene.meshes:
