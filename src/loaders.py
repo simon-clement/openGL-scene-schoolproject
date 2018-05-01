@@ -154,23 +154,13 @@ def load_textured(file):
         return []  # error reading => return empty list
 
     # Note: embedded textures not supported at the moment
-    path = os.path.dirname(file)
     for mat in scene.materials:
-        mat.tokens = dict(reversed(list(mat.properties.items())))
-        if 'file' in mat.tokens:  # texture file token
-            tname = mat.tokens['file'].split('/')[-1].split('\\')[-1]
-            # search texture in file's whole subdir since path often screwed up
-            tname = [os.path.join(d[0], f) for d in os.walk(path) for f in d[2]
-                     if tname.startswith(f) or f.startswith(tname)]
-            if tname:
-                mat.texture = Texture(tname[0])
-            else:
-                print('Failed to find texture:', tname)
+        mat.texture = Texture(mat.file)
 
     # prepare textured mesh
     meshes = []
     for mesh in scene.meshes:
-        texture = scene.materials[mesh.materialindex].texture
+        texture = Texture(scene.materials[mesh.materialindex].file)
 
         # tex coords in raster order: compute 1 - y to follow OpenGL convention
         tex_uv = ((0, 1) + mesh.texturecoords[0][:, :2] * (1, -1)
