@@ -139,8 +139,9 @@ class SkinnedMesh:
 class PhongMesh:
     """ Mesh Object, loaded from obj file"""
 
-    def __init__(self, attributes, index):
+    def __init__(self, texture, attributes, index):
         self.vertexArray = VertexArray(attributes, index)
+        self.texture = texture
 
     def draw(self, projection, view, model, shaders=None,
              color=(1, 1, 1, 1), view_vector=(0, 0, 1), **param):
@@ -161,6 +162,12 @@ class PhongMesh:
         GL.glUniformMatrix4fv(projMatrix_location, 1, True, projection)
         GL.glUniform3fv(viewVec_location, 1, view_vector)
 
+        # texture access setups
+        texture_location = GL.glGetUniformLocation(shader.glid, 'diffuseMap')
+        GL.glActiveTexture(GL.GL_TEXTURE0)
+        GL.glBindTexture(GL.GL_TEXTURE_2D, self.texture.glid)
+        GL.glUniform1i(texture_location, 0)
+        
         # draw triangle as GL_TRIANGLE vertex array, draw array call
         self.vertexArray.draw(GL.GL_TRIANGLES)
 

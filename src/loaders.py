@@ -181,7 +181,7 @@ def load_textured(file):
 
 
 
-def load_with_hierarchy(file):
+def load_with_hierarchy(file, ma_texture):
     """ load resources from file using pyassimp, return list of ColorMesh """
     nodes = {}  # nodes: string name -> node dictionary
     try:
@@ -190,6 +190,10 @@ def load_with_hierarchy(file):
     except pyassimp.errors.AssimpError:
         print('ERROR: pyassimp unable to load', file)
         return []     # error reading => return empty list
+    
+    # Ajout de la texture
+    for mat in scene.materials:
+        mat.texture = Texture(ma_texture)
 
     def make_nodes(pyassimp_node):
         """ Recursively builds nodes for our graph, matching pyassimp nodes """
@@ -203,7 +207,9 @@ def load_with_hierarchy(file):
 
     # ---- create ColorMesh objects
     for mesh in scene.meshes:
-        mesh.loaded_mesh = PhongMesh([mesh.vertices, mesh.normals],
+        texture = scene.materials[mesh.materialindex].texture
+        # create the textured mesh object from texture, attributes, and indices
+        mesh.loaded_mesh = PhongMesh(texture, [mesh.vertices, mesh.normals],
                                      mesh.faces)
 
     for final_node, assimp_node in nodes.values():
@@ -234,7 +240,6 @@ def load_skybox(sphere, ma_texture):
     meshes = []
     for mesh in scene.meshes:
         texture = scene.materials[mesh.materialindex].texture
-
         # create the textured mesh object from texture, attributes, and indices
         meshes.append(SkyBoxMesh(texture, [mesh.vertices], mesh.faces))
 

@@ -58,11 +58,13 @@ uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
 uniform mat4 projMatrix;
 out vec3 outNormal;
+out vec2 fragTexCoord;
 void main() {
     gl_Position = projMatrix * viewMatrix * modelMatrix * vec4(position, 1);
     mat4 modV = viewMatrix * modelMatrix;
     mat3 M = mat3(vec3(modV[0]), vec3(modV[1]), vec3(modV[2]));
     outNormal = transpose(inverse(M)) * normal;
+    fragTexCoord = vec2(position[0], position[1]);
 }"""
 
 LAMBERTIAN_FRAG = """#version 330 core
