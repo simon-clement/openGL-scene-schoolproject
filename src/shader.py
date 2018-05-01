@@ -69,9 +69,10 @@ void main() {
 }"""
 
 LAMBERTIAN_FRAG = """#version 330 core
+uniform sampler2D diffuseMap;
 in vec3 outNormal;
 in vec2 fragTexCoord;
-out vec4 color;
+out vec4 outcolor;
 uniform vec3 view;
 void main() {
     vec4 ambiant = vec4(0.1,0,0,1);
@@ -79,7 +80,7 @@ void main() {
     vec3 l = vec3(0, 0, 1);
     vec4 col = vec4(1, 0.8, 0.6, 1);
     float dotP = max(0, dot(normal, l));
-    color = texture(diffuseMap, fragTexCoord);
+    outcolor = texture(diffuseMap, fragTexCoord);
 }"""
 
 
