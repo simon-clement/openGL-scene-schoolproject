@@ -28,7 +28,7 @@ class Viewer:
         glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, GL.GL_TRUE)
         glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
         glfw.window_hint(glfw.RESIZABLE, False)
-        new_sample = 4
+        new_sample = 32
         glfw.window_hint(glfw.SAMPLES, new_sample) # MSAA: color buffer contains 4 subsamples per screen coordinate (all buffers size are increased by 4)
         self.win = glfw.create_window(width, height, 'Viewer', None, None)
         self.offset_time_for_loading = 0
