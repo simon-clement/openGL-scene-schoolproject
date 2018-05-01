@@ -23,21 +23,18 @@ def faire_pousser_sur(tronc, hauteur, branches_restantes):
             faire_pousser_sur(branche, hauteur / 3., branches_restantes)
 
 
-class Arbre:
-    """Class of tree"""
-    def __init__(self):
-        transform = (translate(0, 0, 0)
-                @ scale(10)
-                @ translate(0, 0, 0))
-        self.tronc = Node(name='arbre', transform=transform, color=(167, 103, 38))
-        self.tronc.add(Cylindre())
+def arbre(hauteur, profondeur):
+    transform = (translate(0, 0, 0)
+            @ translate(-10, 0, -20)
+            @ translate(0, 10 * hauteur, 0)       # au niveau du sol
+            @ scale(hauteur)
+            @ scale(x=1, y=10, z=1))    # forme d'arbre
+    tronc = Node(name='arbre', transform=transform, color=(167, 103, 38))
+    tronc.add(Cylindre())
 
-        faire_pousser_sur(self.tronc, 10, 1)
-
-    def draw(self, projection, view, model, **param):
-        """just draw the node, passing all arguments"""
-        self.tronc.draw(projection, view, model, **param)
-
+    faire_pousser_sur(tronc, hauteur, profondeur)
+    return tronc
+    
 class Poubelle:
     """This class should make the ptero fly :3 """
     def __init__(self, node_dino):
