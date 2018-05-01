@@ -156,6 +156,10 @@ class PhongMesh:
         viewVec_location = \
             GL.glGetUniformLocation(shader.glid, 'view')
 
+        texture_location = GL.glGetUniformLocation(shader.glid, 'diffuseMap')
+        GL.glActiveTexture(GL.GL_TEXTURE0)
+        GL.glBindTexture(GL.GL_TEXTURE_2D, self.texture.glid)
+
         GL.glUniformMatrix4fv(modelMatrix_location, 1, True,
                               model)
         GL.glUniformMatrix4fv(viewMatrix_location, 1, True, view)
@@ -163,9 +167,8 @@ class PhongMesh:
         GL.glUniform3fv(viewVec_location, 1, view_vector)
 
         # texture access setups
-        texture_location = GL.glGetUniformLocation(shader.glid, 'diffuseMap')
-        GL.glActiveTexture(GL.GL_TEXTURE0)
-        GL.glBindTexture(GL.GL_TEXTURE_2D, self.texture.glid)
+        
+        
         GL.glUniform1i(texture_location, 0)
         
         # draw triangle as GL_TRIANGLE vertex array, draw array call
