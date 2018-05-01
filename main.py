@@ -43,8 +43,6 @@ def main():
     viewer.add(Ptero(load_skinned("pterosaur.dae")[0]))
     viewer.add_element_interacting(load_for_particle("cube_particle.dae")[0])
 
-    tronc = Node(name='arbre', transform=translate(-1, 0, 0), color=(1, 0, 0.5, 1))
-    tronc.add(Cylindre())
     viewer.add(Arbre())
 
 
