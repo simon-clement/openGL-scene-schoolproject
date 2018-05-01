@@ -23,7 +23,7 @@ class Arbre:
 
     def draw(self, projection, view, model, **param):
         """just draw the node, passing all arguments"""
-        pass
+        self.tronc.draw(projection, view, model, **param)
 
 class Poubelle:
     """This class should make the ptero fly :3 """
