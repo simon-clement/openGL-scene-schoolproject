@@ -4,15 +4,20 @@ Python OpenGL dinosaurus : sweet and flying with geysers
 """
 
 import glfw                         # lean window system wrapper for OpenGL
-from src.transform import rotate, translate
+from src.transform import rotate, translate, scale
 import math
 
 class Arbre:
     """Class of tree"""
     def __init__(self):
-        transform = translate(0, 0, 0)
+        transform = (translate(0, 0, 0)
+                @ scale(10)
+                @ translate(0, 0, 0))
         tronc = Node(name='arbre', transform=transform, color=(167, 103, 38))
         tronc.add(Cylindre())
+
+        branche = Node(name='branche', transform=transform, color=(.65, .40, .15))
+        tronc.add(branche)
 
     def draw(self, projection, view, model, **param):
         """just draw the node, passing all arguments"""
