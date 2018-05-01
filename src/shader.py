@@ -6,6 +6,7 @@ GEYSER_SHADER_ID = 0
 LAMBERTIAN_SHADER_ID = 1
 COLOR_SHADER_ID = 2
 SKYBOX_SHADER_ID = 3
+UI_SHADER_ID = 4
 
 class Shader:
     """ Helper class to create and automatically destroy shader program """
@@ -183,6 +184,31 @@ void main() {
 
 """ % {"particle_per_time" : PARTICLE_PER_TIME,
         "time_rising" : TIME_RISING}
+
+# ------------  Simple UI shaders ------------------------------------------
+UI_VERT = """#version 330 core
+layout(location = 0) in vec3 position;
+layout(location = 1) in vec3 color;
+
+out vec3 fragColor;
+void main() {
+    gl_Position = vec4(position, 1);
+    fragColor = color;
+}"""
+
+
+UI_FRAG = """#version 330 core
+in vec3 fragColor;
+uniform float charge;
+out vec4 outColor;
+void main() {
+    if (charge > fragColor.r) {
+        outColor = vec4(fragColor, 1);
+    } else {
+        outColor = vec4(1, 1, 1, 0.4);
+    }
+}"""
+
 
 # ------------  Simple color shaders ------------------------------------------
 COLOR_VERT = """#version 330 core
