@@ -44,12 +44,15 @@ def main():
     viewer.add(Ptero(load_skinned("pterosaur.dae")[0]))
     viewer.add_element_interacting(load_for_particle("cube_particle.dae")[0])
 
-    vertices = np.array([0.1, 0.2, 0,
-                0.1, 0.5, 0,
-                0.2, 0.2, 0])
-    colors = np.array([0, 0, 1,
-              1, 0, 0,
-              0, 0, 1])
+    bleu = [0,0,1]
+    rouge = [1, 0, 0]
+    vertices = np.array([[0.7, -0.5, 0],
+                [0.7, 0.5, 0],
+                [0.75, -0.5, 0],
+                [0.7, 0.5, 0],
+                [0.75, -0.5, 0],
+                [0.75,0.5,0]])
+    colors = np.array([bleu, rouge, bleu, rouge, bleu, rouge])
     barre_chargement = UIMesh(np.array([vertices, colors]))
     viewer.add_UI(barre_chargement)
 

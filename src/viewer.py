@@ -23,6 +23,7 @@ class Viewer:
     def __init__(self, width=640, height=480):
 
         # version hints: create GL window with >= OpenGL 3.3 and core profile
+        self.vitesse_charge = 50
         glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
         glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
         glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, GL.GL_TRUE)
@@ -96,7 +97,14 @@ class Viewer:
                               shaders=self.shaders, win=self.win,
                               view_vector=view_vec)
 
+
+            if self.is_charging_geyser:
+                charge = min(self.vitesse_charge*(glfw.get_time() - self.offset_time_for_loading), 50)  / 50
+            else:
+                charge = 0
+                
             for elem_ui in self.elements_UI:
+                elem_ui.set_charge(charge)
                 elem_ui.draw(projection, view, ModelMat,
                               shaders=self.shaders, win=self.win,
                               view_vector=view_vec)
@@ -128,6 +136,6 @@ class Viewer:
         elif action == glfw.RELEASE:
             if key == glfw.KEY_SPACE and self.is_charging_geyser:
                 self.is_charging_geyser = False
-                charge = max(min(250*(glfw.get_time() - self.offset_time_for_loading), 70),20)
+                charge = min(20 + self.vitesse_charge*(glfw.get_time() - self.offset_time_for_loading), 70)
                 for elem_interact in self.elements_interacting:
                     elem_interact.new_geyser(charge)

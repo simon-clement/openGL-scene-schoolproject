@@ -199,9 +199,14 @@ void main() {
 
 UI_FRAG = """#version 330 core
 in vec3 fragColor;
+uniform float charge;
 out vec4 outColor;
 void main() {
-    outColor = vec4(fragColor, 1);
+    if (charge > fragColor.r) {
+        outColor = vec4(fragColor, 1);
+    } else {
+        outColor = vec4(1, 1, 1, 0.4);
+    }
 }"""
 
 

@@ -169,14 +169,20 @@ class UIMesh:
 
     def __init__(self, attributes, index=None):
         self.vertexArray = VertexArray(attributes, index)
+        self.charge = 0 # en pourcentage de 0 à 1
 
     def draw(self, projection, view, model, shaders=None, color=(1,1,1,1), **param):
         shader = shaders[UI_SHADER_ID]
+        charge_location = GL.glGetUniformLocation(shader.glid, 'charge')
         GL.glUseProgram(shader.glid)
+        GL.glUniform1f(charge_location, self.charge)
+        GL.glEnable(GL.GL_BLEND)
 
-        # draw triangle as GL_TRIANGLE vertex array, draw array call
         self.vertexArray.draw(GL.GL_TRIANGLES)
+        GL.glDisable(GL.GL_BLEND)
 
+    def set_charge(self, charge):
+        self.charge = charge
 
 
 class ColorMesh:
@@ -210,7 +216,6 @@ class ParticleMesh:
 
     def new_geyser(self, charge):
         self.geysers += [(glfw.get_time(), charge)]
-        print(len(self.geysers))
 
     def draw(self, projection, view, model, shaders=None, color=(1,1,1,1), **param):
         shader = shaders[GEYSER_SHADER_ID]
