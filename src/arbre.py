@@ -25,10 +25,10 @@ def faire_pousser_sur(tronc, hauteur, branches_restantes):
 
 def arbre(hauteur, profondeur):
     transform = (translate(0, 0, 0)
-            @ translate(-10, 0, -20)
-            @ translate(0, 10 * hauteur, 0)       # au niveau du sol
-            @ scale(hauteur)
-            @ scale(x=1, y=10, z=1))    # forme d'arbre
+            @ translate(-10, 0, -20)        # placer
+            @ translate(0, 10 * hauteur, 0) # au niveau du sol
+            @ scale(hauteur)                # taille generale
+            @ scale(x=1, y=10, z=1))        # forme d'arbre
     tronc = Node(name='arbre', transform=transform, color=(167, 103, 38))
     tronc.add(Cylindre())
 
