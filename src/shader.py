@@ -275,12 +275,8 @@ void main() {
     vec3 position2 = position*10000; // taille sphere * 10000
     vec4 position3D = modelviewprojection * vec4(position2, 1);
     gl_Position = position3D;
-    // rayon courant = sqrt(x**2 + y**2)
-    // angle courant = atan(x/y)
-    // distance sur la texture (longitude)= (angle/(2*pi)) * 2pi*r
-    float rayon = sqrt(pow(position[0],2) + pow(position[2],2));
     float latitude =  - (position[1]/2 - 0.5);
-    float longitude = atan(abs(position[2])/abs((position[0]+1)))* 2*rayon ;
+    float longitude = atan(abs(position[2])/abs((position[0])))*2 ;
     fragTexCoord = vec2(longitude, latitude);
 }"""
 
