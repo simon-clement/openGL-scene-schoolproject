@@ -29,7 +29,8 @@ class Viewer:
         glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, GL.GL_TRUE)
         glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
         glfw.window_hint(glfw.RESIZABLE, False)
-        glfw.window_hint(glfw.SAMPLES, 4) # MSAA: color buffer contains 4 subsamples per screen coordinate (all buffers size are increased by 4)
+        new_sample = 32
+        glfw.window_hint(glfw.SAMPLES, new_sample) # MSAA: color buffer contains 4 subsamples per screen coordinate (all buffers size are increased by 4)
         self.win = glfw.create_window(width, height, 'Viewer', None, None)
         self.offset_time_for_loading = 0
         self.is_charging_geyser = False
@@ -71,6 +72,14 @@ class Viewer:
         self.particle_system = None
         self.elements_interacting = []
         self.elements_UI = []
+
+        # Multisampled texture attachments (MSAA)
+        tex = GL.glGenTextures(1)
+        GL.glBindTexture(GL.GL_TEXTURE_2D_MULTISAMPLE, tex)
+        GL.glTexImage2DMultisample(GL.GL_TEXTURE_2D_MULTISAMPLE, new_sample,
+                                   GL.GL_RGB, width, height, GL.GL_TRUE)
+        # GL.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0,
+                                  # GL.GL_TEXTURE_2D_MULTISAMPLE, tex, 0)
 
         # initially empty list of object to draw
         self.drawables = []

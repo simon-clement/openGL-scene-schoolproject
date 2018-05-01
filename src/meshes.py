@@ -186,9 +186,11 @@ class UIMesh:
         GL.glUseProgram(shader.glid)
         GL.glUniform1f(charge_location, self.charge)
         GL.glEnable(GL.GL_BLEND)
+        GL.glDisable(GL.GL_DEPTH_TEST)
 
         self.vertexArray.draw(GL.GL_TRIANGLES)
         GL.glDisable(GL.GL_BLEND)
+        GL.glEnable(GL.GL_DEPTH_TEST)
 
     def set_charge(self, charge):
         self.charge = charge
