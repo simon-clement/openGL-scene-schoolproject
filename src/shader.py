@@ -272,7 +272,7 @@ uniform mat4 modelviewprojection;
 layout(location = 0) in vec3 position;
 out vec2 fragTexCoord;
 void main() {
-    vec3 position2 = position*10000; // taille sphere * 10000
+    vec3 position2 = position*1000; // taille sphere * 10000
     vec4 position3D = modelviewprojection * vec4(position2, 1);
     gl_Position = position3D;
     float latitude =  - (position[1]/2 - 0.5);
