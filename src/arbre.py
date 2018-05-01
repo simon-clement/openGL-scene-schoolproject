@@ -10,9 +10,8 @@ from src.cylindre import Cylindre
 import math
 from random import random
 
-def faire_pousser_sur(tronc, branches_restantes):
+def faire_pousser_sur(tronc, hauteur, branches_restantes):
     branches_restantes -= 1
-    hauteur = tronc.hauteur / 3.
 
     for i in range(2):
         transform = (translate(0, 0, 0)     # orientation des branches
@@ -20,23 +19,20 @@ def faire_pousser_sur(tronc, branches_restantes):
                 @ translate(0, 0, 0))       # pour placer au sommet du tronc
         branche = Node(transform=transform, color=(.65, .40, .15))
         tronc.add(branche)
-        
-        if branches_restantes < 0:
-            faire_pousser_sur(branche, branches_restantes)
-    
+        if branches_restantes > 0:
+            faire_pousser_sur(branche, hauteur / 3., branches_restantes)
+
 
 class Arbre:
     """Class of tree"""
     def __init__(self):
-        self.hauteur = 10
-
         transform = (translate(0, 0, 0)
-                @ scale(self.hauteur)
+                @ scale(10)
                 @ translate(0, 0, 0))
-        tronc = Node(name='arbre', transform=transform, color=(167, 103, 38))
-        tronc.add(Cylindre())
+        self.tronc = Node(name='arbre', transform=transform, color=(167, 103, 38))
+        self.tronc.add(Cylindre())
 
-        faire_pousser_sur(tronc, 1)
+        faire_pousser_sur(self.tronc, 10, 1)
 
     def draw(self, projection, view, model, **param):
         """just draw the node, passing all arguments"""
