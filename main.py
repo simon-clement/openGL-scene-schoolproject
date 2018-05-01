@@ -27,7 +27,7 @@ from src.interaction import GLFWTrackball
 from src.loaders import load_skinned, load_skybox, load_with_hierarchy, \
     load_for_particle, load_textured
 from src.dino import Dino, Ptero
-from src.arbre import arbre
+from src.arbre import creer_arbre
 from src.cylindre import Cylindre
 
 
@@ -38,15 +38,18 @@ def main():
     viewer = Viewer()
 
     # Sky box :
-    # viewer.add(load_skybox("sphere.dae", "ciel2.png"))
-# 
-    # viewer.add(load_with_hierarchy("sol.dae")[0])
-    # viewer.add_element_interacting(Dino(load_skinned("dinoPlateforme.dae")[0]))
-    # viewer.add(Ptero(load_skinned("pterosaur.dae")[0]))
-    # viewer.add_element_interacting(load_for_particle("cube_particle.dae")[0])
+    viewer.add(load_skybox("sphere.dae", "ciel2.png"))
+
+    viewer.add(load_with_hierarchy("sol.dae")[0])
+    viewer.add_element_interacting(Dino(load_skinned("dinoPlateforme.dae")[0]))
+    viewer.add(Ptero(load_skinned("pterosaur.dae")[0]))
+    viewer.add_element_interacting(load_for_particle("cube_particle.dae")[0])
 
     viewer.add_element_interacting(Dino(load_skinned("dinoPlateforme.dae")[0]))
-    viewer.add(arbre(.8, 1))
+
+    cylindre = Cylindre()
+    arb1 = creer_arbre(10, 5, cylindre, (20, 0, 1))
+    viewer.add(arb1)
 
 
 
