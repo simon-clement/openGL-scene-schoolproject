@@ -55,7 +55,7 @@ def load_skinned(file):
     root_node = make_nodes(scene.rootnode)
 
     for mat in scene.materials:
-        mat.texture = Texture(mat.file)
+        mat.texture = Texture(mat.properties[("file", 1)])
 
     # ---- create SkinnedMesh objects
     for mesh in scene.meshes:
@@ -155,12 +155,12 @@ def load_textured(file):
 
     # Note: embedded textures not supported at the moment
     for mat in scene.materials:
-        mat.texture = Texture(mat.file)
+        mat.texture = Texture(mat.properties[("file", 1)])
 
     # prepare textured mesh
     meshes = []
     for mesh in scene.meshes:
-        texture = Texture(scene.materials[mesh.materialindex].file)
+        texture = Texture(scene.materials[mesh.materialindex].texture)
 
         # tex coords in raster order: compute 1 - y to follow OpenGL convention
         tex_uv = ((0, 1) + mesh.texturecoords[0][:, :2] * (1, -1)
@@ -200,7 +200,7 @@ def load_with_hierarchy(file):
     path = os.path.dirname(file)
     
     for mat in scene.materials:
-        mat.texture = Texture(mat.file)
+        mat.texture = Texture(mat.properties[("file", 1)])
 
 
     # ---- create ColorMesh objects
