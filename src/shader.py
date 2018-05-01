@@ -7,6 +7,7 @@ LAMBERTIAN_SHADER_ID = 1
 COLOR_SHADER_ID = 2
 SKYBOX_SHADER_ID = 3
 UI_SHADER_ID = 4
+SKINNING_SHADER_ID = 5
 
 class Shader:
     """ Helper class to create and automatically destroy shader program """
@@ -65,7 +66,7 @@ void main() {
     mat4 modV = viewMatrix * modelMatrix;
     mat3 M = mat3(vec3(modV[0]), vec3(modV[1]), vec3(modV[2]));
     outNormal = transpose(inverse(M)) * normal;
-    fragTexCoord = vec2(position[0], position[1]);
+    fragTexCoord = vec2(position[0], position[1])/300;
 }"""
 
 LAMBERTIAN_FRAG = """#version 330 core
@@ -248,15 +249,16 @@ uniform mat4 projection, view;
 // ---- skinning globals and attributes
 const int MAX_VERTEX_BONES=%d, MAX_BONES=%d;
 uniform mat4 boneMatrix[MAX_BONES];
+out vec3 outNormal;
+out vec2 fragTexCoord;
 
 // ---- vertex attributes
 layout(location = 0) in vec3 position;
-layout(location = 1) in vec3 color;
+layout(location = 1) in vec3 normale;
 layout(location = 2) in vec4 bone_ids;
 layout(location = 3) in vec4 bone_weights;
 
 // ----- interpolated attribute variables to be passed to fragment shader
-out vec3 fragColor;
 
 void main() {
     vec4 weight = normalize(bone_weights);
@@ -271,7 +273,13 @@ void main() {
     vec4 wPosition4 = skinMatrix * vec4(position, 1.0);
     gl_Position = projection * view * wPosition4;
 
-    fragColor = color;
+    mat4 modV = view * skinMatrix;
+    mat3 M = mat3(vec3(modV[0]), vec3(modV[1]), vec3(modV[2]));
+    outNormal = transpose(inverse(M)) * normal;
+    
+    float latitude =  - (position[1]/2 - 0.5);
+    float longitude = atan(abs(position[2])/abs((position[0])))*2 ;
+    fragTexCoord = vec2(longitude, latitude);
 }
 """ % (MAX_VERTEX_BONES, MAX_BONES)
 

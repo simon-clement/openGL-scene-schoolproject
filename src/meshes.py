@@ -104,16 +104,15 @@ class SkinnedMesh:
         self.vertex_array = VertexArray(attributes, index)
 
         # feel free to move this up in Viewer as shown in previous practicals
-        self.skinning_shader = Shader(SKINNING_VERT, COLOR_FRAG)
 
         # store skinning data
         self.bone_nodes = bone_nodes
         self.bone_offsets = bone_offsets
 
-    def draw(self, projection, view, _model, **_kwargs):
+    def draw(self, projection, view, _model, shaders=None, **_kwargs):
         """ skinning object draw method """
 
-        shid = self.skinning_shader.glid
+        shid = shaders[SKINNING_SHADER_ID].glid
         GL.glUseProgram(shid)
 
         # setup camera geometry parameters
