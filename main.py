@@ -59,6 +59,7 @@ def main():
     cylindre = Cylindre()
     arb1 = creer_arbre(10, 2, cylindre, (-20, 0, -20))
     viewer.add(arb1)
+    """
     arb2 = creer_arbre(10, 3, cylindre, (0, -.5, -25))
     viewer.add(arb2)
 
@@ -72,7 +73,8 @@ def main():
         arb = creer_arbre(8 + random() * 4, 2, cylindre,
                           ((x2 - x1) * random() + x1, h, (z2 - z1) * random() + z1))
         viewer.add(arb)
-
+    
+    """
 
     bleu = [0,0,1]
     rouge = [1, 0, 0]
