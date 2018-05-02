@@ -48,11 +48,12 @@ class Dino:
 
 class Ptero:
     """This class should make the ptero fly :3 """
-    def __init__(self, node_dino):
+    def __init__(self, node_dino, angle=0, distance=40, hauteur=20, vitesse=20):
         self.node_dino = node_dino
-        self.angle = 0
-        self.distance = 40
-        self.hauteur = 20
+        self.angle = angle
+        self.distance = distance
+        self.hauteur = hauteur
+        self.vitesse = vitesse
         self.time_offset = glfw.get_time()
 
     def draw(self, projection, view, model, **param):
@@ -63,14 +64,13 @@ class Ptero:
         self.time_offset = newt
 
         # --- actualisation des donnees
-        self.angle += 20 * dt
+        self.angle += self.vitesse * dt
         time_in_animation = self.time_offset%5
         real_height = self.hauteur + 7*math.cos(-0.5+time_in_animation * 2*3.1415/5)
-        #(3 - time_in_animation) 
+        #(3 - time_in_animation)
         #* (1 - 5/2 * (time_in_animation >= 3))*3
 
         transform = rotate(axis=(0,1,0), angle=self.angle) @ translate(self.distance,real_height,0)
         model = model @ transform
         self.node_dino.draw(projection, view, model,
                             time=time_in_animation, **param)
-

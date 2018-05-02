@@ -42,6 +42,9 @@ def main():
     viewer.add(load_with_hierarchy("sol.dae")[0])
     viewer.add_element_interacting(Dino(load_skinned("dinoPlateforme.dae")[0]))
     viewer.add(Ptero(load_skinned("pterosaur.dae")[0]))
+    viewer.add(Ptero(load_skinned("pterosaur.dae")[0], 30, 60, 25, 30))
+    viewer.add(Ptero(load_skinned("pterosaur.dae")[0], 60, 70, 23, 25))
+    #viewer.add(Ptero(load_skinned("pterosaur.dae")[0], angle=0, distance=40, hauteur=20, vitesse=20))
     viewer.add_element_interacting(load_for_particle("cube_particle.dae")[0])
 
     bleu = [0,0,1]
