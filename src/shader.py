@@ -223,8 +223,8 @@ layout(location = 0) in vec3 position;
 out vec2 fragTexCoord;
 void main() {
     gl_Position = vec4(position, 1);
-    float x = (position[0]-0.95)/1.5;
-    float y = -(position[1]+0.75);
+    float x = (position[0]-0.95);
+    float y = -(position[1]+0.65);
     fragTexCoord = vec2(x, y);
 }"""
 
