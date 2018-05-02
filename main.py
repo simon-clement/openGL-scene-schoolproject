@@ -86,10 +86,10 @@ def main():
     barre_chargement = UIMesh(np.array([vertices, colors]))
     viewer.add_UI(barre_chargement)
 
-    vertices2 = np.array([[0.05, -0.95, 0],
-                [0.05, -0.75, 0],
+    vertices2 = np.array([[0.55, -0.95, 0],
+                [0.55, -0.75, 0],
                 [-0.95, -0.95, 0],
-                [0.05, -0.75, 0],
+                [0.55, -0.75, 0],
                 [-0.95, -0.95, 0],
                 [-0.95, -0.75,0]])
     texture = Texture("press.png")
