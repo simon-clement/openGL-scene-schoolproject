@@ -39,24 +39,28 @@ def main():
     viewer = Viewer()
 
     # Sky box :
-    # viewer.add(load_skybox("sphere.dae", "ciel2.png"))
-# 
-    # viewer.add(load_with_hierarchy("sol.dae")[0])
-    # viewer.add_element_interacting(Dino(load_skinned("dinoPlateforme.dae")[0]))
-    # viewer.add(Ptero(load_skinned("pterosaur.dae")[0]))
-    # viewer.add_element_interacting(load_for_particle("cube_particle.dae")[0])
-# 
-    # viewer.add_element_interacting(Dino(load_skinned("dinoPlateforme.dae")[0]))
+    viewer.add(load_skybox("sphere.dae", "ciel2.png"))
+
+    viewer.add(load_with_hierarchy("sol.dae")[0])
+    viewer.add_element_interacting(Dino(load_skinned("dinoPlateforme.dae")[0]))
+    viewer.add(Ptero(load_skinned("pterosaur.dae")[0]))
+    viewer.add_element_interacting(load_for_particle("cube_particle.dae")[0])
+
+    viewer.add_element_interacting(Dino(load_skinned("dinoPlateforme.dae")[0]))
 
     cylindre = Cylindre()
-    # arb1 = creer_arbre(10, 3, cylindre, (-20, 0, -20))
-    # viewer.add(arb1)
-    # arb2 = creer_arbre(10, 4, cylindre, (0, -.5, -25))
-    # viewer.add(arb2)
-    l = 80
-    for i in range(15):
-        arb = creer_arbre(8 + random() * 4, int(random() * 2) + 3, cylindre,
-                          (l * random() - l / 2, 0, l * random() - l / 2))
+    arb1 = creer_arbre(10, 3, cylindre, (-20, 0, -20))
+    viewer.add(arb1)
+    arb2 = creer_arbre(10, 4, cylindre, (0, -.5, -25))
+    viewer.add(arb2)
+    x1 = -30
+    x2 = -50
+    h = 22
+    z1 = -70
+    z2 = -90
+    for i in range(5):
+        arb = creer_arbre(8 + random() * 4, int(random() * 2) + 2, cylindre,
+                          ((x2 - x1) * random() + x1, h, (z2 - z1) * random() + z1))
         viewer.add(arb)
 
 
