@@ -30,6 +30,7 @@ from src.dino import Dino, Ptero
 from src.arbre import creer_arbre
 from src.cylindre import Cylindre
 from random import random
+from src.meshes import UIMesh
 
 
 
@@ -42,11 +43,17 @@ def main():
     viewer.add(load_skybox("sphere.dae", "ciel2.png"))
 
     viewer.add(load_with_hierarchy("sol.dae")[0])
-    viewer.add_element_interacting(Dino(load_skinned("dinoPlateforme.dae")[0]))
-    viewer.add(Ptero(load_skinned("pterosaur.dae")[0]))
+    viewer.add_element_interacting(Dino(load_skinned("dinoPlateforme.dae", 0)[0]))
+    mon_pterosaure = load_skinned("pterosaur.dae", 1)[0]
+    viewer.add(Ptero(mon_pterosaure, 90, 20, 25, 0.7, 8, 0))
+    viewer.add(Ptero(mon_pterosaure))
+    viewer.add(Ptero(mon_pterosaure, 250, 45, 46, 1, 2, 1))
+    viewer.add(Ptero(mon_pterosaure, 300, 50, 30, 1.5, 5))
+    viewer.add(Ptero(mon_pterosaure, 30, 60, 40, 0.5, 1, 1))
+    viewer.add(Ptero(mon_pterosaure, 190, 70, 50, 1.2, 4))
+    #viewer.add(Ptero(load_skinned("pterosaur.dae")[0], angle=0, distance=40, hauteur=20,  taille=1, decalage=0, sens=0))
     viewer.add_element_interacting(load_for_particle("cube_particle.dae")[0])
 
-    viewer.add_element_interacting(Dino(load_skinned("dinoPlateforme.dae")[0]))
 
     cylindre = Cylindre()
     arb1 = creer_arbre(10, 3, cylindre, (-20, 0, -20))
@@ -62,6 +69,20 @@ def main():
         arb = creer_arbre(8 + random() * 4, int(random() * 2) + 2, cylindre,
                           ((x2 - x1) * random() + x1, h, (z2 - z1) * random() + z1))
         viewer.add(arb)
+
+
+    bleu = [0,0,1]
+    rouge = [1, 0, 0]
+    vertices = np.array([[0.7, -0.5, 0],
+                [0.7, 0.5, 0],
+                [0.75, -0.5, 0],
+                [0.7, 0.5, 0],
+                [0.75, -0.5, 0],
+                [0.75,0.5,0]])
+    colors = np.array([bleu, rouge, bleu, rouge, bleu, rouge])
+    barre_chargement = UIMesh(np.array([vertices, colors]))
+    viewer.add_UI(barre_chargement)
+
 
 
     # if len(sys.argv) < 2:

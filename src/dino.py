@@ -4,7 +4,7 @@ Python OpenGL dinosaurus : sweet and flying with geysers
 """
 
 import glfw                         # lean window system wrapper for OpenGL
-from src.transform import rotate, translate
+from src.transform import rotate, translate, scale
 import math
 
 class Dino:
@@ -48,11 +48,15 @@ class Dino:
 
 class Ptero:
     """This class should make the ptero fly :3 """
-    def __init__(self, node_dino):
+    def __init__(self, node_dino, angle=0, distance=40, hauteur=20, taille=1, decalage=0, sens=0):
         self.node_dino = node_dino
-        self.angle = 0
-        self.distance = 40
-        self.hauteur = 20
+        self.angle = angle
+        self.distance = distance
+        self.hauteur = hauteur
+        self.vitesse = 20+10/taille
+        self.taille = taille
+        self.decalage = decalage
+        self.sens = sens
         self.time_offset = glfw.get_time()
 
     def draw(self, projection, view, model, **param):
@@ -63,14 +67,13 @@ class Ptero:
         self.time_offset = newt
 
         # --- actualisation des donnees
-        self.angle += 20 * dt
-        time_in_animation = self.time_offset%5
-        real_height = self.hauteur + 7*math.cos(-0.5+time_in_animation * 2*3.1415/5)
-        #(3 - time_in_animation) 
+        self.angle += self.vitesse * dt
+        time_in_animation = (self.time_offset * (1+1/self.taille) + self.decalage)%5
+        real_height = self.hauteur + 7*self.taille*math.cos(-0.5+time_in_animation * 2*3.1415/5)
+        #(3 - time_in_animation)
         #* (1 - 5/2 * (time_in_animation >= 3))*3
 
-        transform = rotate(axis=(0,1,0), angle=self.angle) @ translate(self.distance,real_height,0)
+        transform = rotate(axis=(0,1,0), angle=self.angle* math.cos(180*self.sens)) @ translate(self.distance,real_height,0) @ scale(self.taille) @ rotate(axis=(0,1,0), angle=180*self.sens)
         model = model @ transform
         self.node_dino.draw(projection, view, model,
                             time=time_in_animation, **param)
-

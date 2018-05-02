@@ -6,6 +6,9 @@ GEYSER_SHADER_ID = 0
 LAMBERTIAN_SHADER_ID = 1
 COLOR_SHADER_ID = 2
 SKYBOX_SHADER_ID = 3
+UI_SHADER_ID = 4
+SKINNING_SHADER_ID = 5
+PLATFORM_SHADER_ID = 6
 
 class Shader:
     """ Helper class to create and automatically destroy shader program """
@@ -52,30 +55,35 @@ class Shader:
 
 # ------------  Simple illumination shaders ----------------------
 LAMBERTIAN_VERT = """#version 330 core
+uniform float facteur;
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
 uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
 uniform mat4 projMatrix;
 out vec3 outNormal;
+out vec2 fragTexCoord;
 void main() {
     gl_Position = projMatrix * viewMatrix * modelMatrix * vec4(position, 1);
     mat4 modV = viewMatrix * modelMatrix;
     mat3 M = mat3(vec3(modV[0]), vec3(modV[1]), vec3(modV[2]));
     outNormal = transpose(inverse(M)) * normal;
+    fragTexCoord = vec2(position[0], position[1])/facteur;
 }"""
 
 LAMBERTIAN_FRAG = """#version 330 core
+uniform sampler2D diffuseMap;
 in vec3 outNormal;
-out vec4 color;
+in vec2 fragTexCoord;
+out vec4 outcolor;
 uniform vec3 view;
 void main() {
     vec4 ambiant = vec4(0.1,0,0,1);
     vec3 normal = normalize(outNormal);
     vec3 l = vec3(0, 0, 1);
-    vec4 col = vec4(1, 0.8, 0.6, 1);
+    vec4 col = texture(diffuseMap, fragTexCoord);
     float dotP = max(0, dot(normal, l));
-    color = col*dotP + ambiant;
+    outcolor = col*dotP + ambiant;
 }"""
 
 
@@ -184,6 +192,31 @@ void main() {
 """ % {"particle_per_time" : PARTICLE_PER_TIME,
         "time_rising" : TIME_RISING}
 
+# ------------  Simple UI shaders ------------------------------------------
+UI_VERT = """#version 330 core
+layout(location = 0) in vec3 position;
+layout(location = 1) in vec3 color;
+
+out vec3 fragColor;
+void main() {
+    gl_Position = vec4(position, 1);
+    fragColor = color;
+}"""
+
+
+UI_FRAG = """#version 330 core
+in vec3 fragColor;
+uniform float charge;
+out vec4 outColor;
+void main() {
+    if (charge > fragColor.r) {
+        outColor = vec4(fragColor, 1);
+    } else {
+        outColor = vec4(1, 1, 1, 0.4);
+    }
+}"""
+
+
 # ------------  Simple color shaders ------------------------------------------
 COLOR_VERT = """#version 330 core
 layout(location = 0) in vec3 position;
@@ -215,18 +248,21 @@ SKINNING_VERT = """#version 330 core
 // ---- camera geometry
 uniform mat4 projection, view;
 
+uniform int axe;
+
 // ---- skinning globals and attributes
 const int MAX_VERTEX_BONES=%d, MAX_BONES=%d;
 uniform mat4 boneMatrix[MAX_BONES];
+out vec3 outNormal;
+out vec2 fragTexCoord;
 
 // ---- vertex attributes
 layout(location = 0) in vec3 position;
-layout(location = 1) in vec3 color;
+layout(location = 1) in vec3 normale;
 layout(location = 2) in vec4 bone_ids;
 layout(location = 3) in vec4 bone_weights;
 
 // ----- interpolated attribute variables to be passed to fragment shader
-out vec3 fragColor;
 
 void main() {
     vec4 weight = normalize(bone_weights);
@@ -241,7 +277,13 @@ void main() {
     vec4 wPosition4 = skinMatrix * vec4(position, 1.0);
     gl_Position = projection * view * wPosition4;
 
-    fragColor = color;
+    mat4 modV = view * skinMatrix;
+    mat3 M = mat3(vec3(modV[0]), vec3(modV[1]), vec3(modV[2]));
+    outNormal = transpose(inverse(M)) * normale;
+
+    float latitude =  - (position[1+axe]/2 - 0.5);
+    float longitude = atan(abs(position[2-axe])/abs((position[0])))*2 ;
+    fragTexCoord = vec2(longitude, latitude);
 }
 """ % (MAX_VERTEX_BONES, MAX_BONES)
 
