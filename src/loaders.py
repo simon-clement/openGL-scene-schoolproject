@@ -210,7 +210,7 @@ def load_with_hierarchy(file, arbre=False):
 
             # create the textured mesh object from texture, attributes, and indices
             mesh.loaded_mesh = ArbreMesh(texture, [mesh.vertices, mesh.normals],
-                                        mesh.faces, 10.0)
+                                        mesh.faces, 5.0)
     else:
         for mesh in scene.meshes:
             # prepare textured mesh
