@@ -245,9 +245,10 @@ class UIMesh:
 class ConsigneMesh:
     """ Mesh Object, not loaded but created"""
 
-    def __init__(self, attributes, index=None):
+    def __init__(self, texture, attributes, index=None):
         self.vertexArray = VertexArray(attributes, index)
         self.charge = 0 # en pourcentage de 0 à 1
+        self.texture = texture
 
     def draw(self, projection, view, model, shaders=None, color=(1,1,1,1), **param):
         shader = shaders[CONSIGNE_SHADER_ID]
@@ -257,10 +258,9 @@ class ConsigneMesh:
         GL.glEnable(GL.GL_BLEND)
         GL.glDisable(GL.GL_DEPTH_TEST)
         texture_location = GL.glGetUniformLocation(shader.glid, 'textureC')
-        texture = Texture("press.png")
-
+        
         GL.glActiveTexture(GL.GL_TEXTURE0)
-        GL.glBindTexture(GL.GL_TEXTURE_2D, texture.glid)
+        GL.glBindTexture(GL.GL_TEXTURE_2D, self.texture.glid)
         self.vertexArray.draw(GL.GL_TRIANGLES)
         GL.glDisable(GL.GL_BLEND)
         GL.glEnable(GL.GL_DEPTH_TEST)

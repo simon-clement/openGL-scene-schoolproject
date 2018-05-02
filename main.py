@@ -91,7 +91,8 @@ def main():
                 [0.05, -0.75, 0],
                 [-0.95, -0.95, 0],
                 [-0.95, -0.75,0]])
-    consigne = ConsigneMesh([vertices2])
+    texture = Texture("press.png")
+    consigne = ConsigneMesh(texture, [vertices2])
     viewer.add_UI(consigne)
 
 
