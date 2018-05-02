@@ -56,17 +56,17 @@ def main():
 
 
     cylindre = Cylindre()
-    arb1 = creer_arbre(10, 3, cylindre, (-20, 0, -20))
+    arb1 = creer_arbre(10, 2, cylindre, (-20, 0, -20))
     viewer.add(arb1)
-    arb2 = creer_arbre(10, 4, cylindre, (0, -.5, -25))
+    arb2 = creer_arbre(10, 3, cylindre, (0, -.5, -25))
     viewer.add(arb2)
     x1 = -30
     x2 = -50
     h = 22
     z1 = -70
     z2 = -90
-    for i in range(5):
-        arb = creer_arbre(8 + random() * 4, int(random() * 2) + 2, cylindre,
+    for i in range(4):
+        arb = creer_arbre(8 + random() * 4, 2, cylindre,
                           ((x2 - x1) * random() + x1, h, (z2 - z1) * random() + z1))
         viewer.add(arb)
 
