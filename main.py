@@ -30,6 +30,7 @@ from src.dino import Dino, Ptero
 from src.arbre import creer_arbre
 from src.cylindre import Cylindre
 from random import random
+from src.texture import Texture
 from src.meshes import UIMesh, ConsigneMesh
 
 
