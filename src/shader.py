@@ -8,6 +8,7 @@ COLOR_SHADER_ID = 2
 SKYBOX_SHADER_ID = 3
 UI_SHADER_ID = 4
 SKINNING_SHADER_ID = 5
+PLATFORM_SHADER_ID = 6
 
 class Shader:
     """ Helper class to create and automatically destroy shader program """
@@ -54,6 +55,7 @@ class Shader:
 
 # ------------  Simple illumination shaders ----------------------
 LAMBERTIAN_VERT = """#version 330 core
+uniform float facteur;
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
 uniform mat4 viewMatrix;
@@ -66,7 +68,7 @@ void main() {
     mat4 modV = viewMatrix * modelMatrix;
     mat3 M = mat3(vec3(modV[0]), vec3(modV[1]), vec3(modV[2]));
     outNormal = transpose(inverse(M)) * normal;
-    fragTexCoord = vec2(position[0], position[1])/300;
+    fragTexCoord = vec2(position[0], position[1])/facteur;
 }"""
 
 LAMBERTIAN_FRAG = """#version 330 core
@@ -276,7 +278,7 @@ void main() {
     mat4 modV = view * skinMatrix;
     mat3 M = mat3(vec3(modV[0]), vec3(modV[1]), vec3(modV[2]));
     outNormal = transpose(inverse(M)) * normale;
-    
+
     float latitude =  - (position[1]/2 - 0.5);
     float longitude = atan(abs(position[2])/abs((position[0])))*2 ;
     fragTexCoord = vec2(longitude, latitude);

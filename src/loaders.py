@@ -76,15 +76,15 @@ def load_skinned(file):
 
         # prepare textured mesh
         texture = scene.materials[mesh.materialindex].texture
-        
+
         # initialize skinned mesh and store in pyassimp_mesh for node addition
         if len(bone_nodes) == 0:
             #  not skinned
-            mesh.skinned_mesh = PhongMesh(texture, 
-                    [mesh.vertices, mesh.normals], mesh.faces)
+            mesh.skinned_mesh = PhongMesh(texture,
+                    [mesh.vertices, mesh.normals], mesh.faces, 30.0)
         else:
             mesh.skinned_mesh = SkinnedMesh(
-                [mesh.vertices, mesh.normals, 
+                [mesh.vertices, mesh.normals,
                     v_bone['id'], v_bone['weight']],
                 bone_nodes, bone_offsets, texture, mesh.faces)
 
@@ -186,7 +186,7 @@ def load_with_hierarchy(file):
     except pyassimp.errors.AssimpError:
         print('ERROR: pyassimp unable to load', file)
         return []     # error reading => return empty list
-    
+
     def make_nodes(pyassimp_node):
         """ Recursively builds nodes for our graph, matching pyassimp nodes """
         node = Node(name=pyassimp_node.name,
@@ -197,7 +197,7 @@ def load_with_hierarchy(file):
 
     root_node = make_nodes(scene.rootnode)
 
- 
+
     for mat in scene.materials:
         mat.texture = Texture(mat.properties[("file", 1)])
 
@@ -206,10 +206,10 @@ def load_with_hierarchy(file):
     for mesh in scene.meshes:
         # prepare textured mesh
         texture = scene.materials[mesh.materialindex].texture
-        
+
         # create the textured mesh object from texture, attributes, and indices
         mesh.loaded_mesh = PhongMesh(texture, [mesh.vertices, mesh.normals],
-                                     mesh.faces)
+                                     mesh.faces, 300.0)
 
     for final_node, assimp_node in nodes.values():
         final_node.add(*(_mesh.loaded_mesh for _mesh in assimp_node.meshes))
