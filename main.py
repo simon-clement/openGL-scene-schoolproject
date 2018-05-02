@@ -27,6 +27,9 @@ from src.interaction import GLFWTrackball
 from src.loaders import load_skinned, load_skybox, load_with_hierarchy, \
     load_for_particle, load_textured
 from src.dino import Dino, Ptero
+from src.arbre import creer_arbre
+from src.cylindre import Cylindre
+from random import random
 from src.meshes import UIMesh
 
 
@@ -50,6 +53,25 @@ def main():
     viewer.add(Ptero(mon_pterosaure, 190, 70, 50, 1.2, 4))
     #viewer.add(Ptero(load_skinned("pterosaur.dae")[0], angle=0, distance=40, hauteur=20,  taille=1, decalage=0, sens=0))
     viewer.add_element_interacting(load_for_particle("cube_particle.dae")[0])
+
+
+    cylindre = Cylindre()
+    arb1 = creer_arbre(15, 3, cylindre, (-20, 0, -20))
+    viewer.add(arb1)
+
+    """
+    arb2 = creer_arbre(10, 4, cylindre, (0, -.5, -25))
+    viewer.add(arb2)
+    x1 = -30
+    x2 = -50
+    h = 22
+    z1 = -70
+    z2 = -90
+    for i in range(5):
+        arb = creer_arbre(8 + random() * 4, int(random() * 2) + 2, cylindre,
+                          ((x2 - x1) * random() + x1, h, (z2 - z1) * random() + z1))
+        viewer.add(arb)
+    """
 
     bleu = [0,0,1]
     rouge = [1, 0, 0]
