@@ -10,7 +10,7 @@ from src.shader import MAX_BONES, MAX_VERTEX_BONES
 
 
 # -------------- 3D resource loader -------------------------------------------
-def load_skinned(file):
+def load_skinned(file, axe):
     """load resources from file using pyassimp, return node hierarchy """
     try:
         option = pyassimp.postprocess.aiProcessPreset_TargetRealtime_MaxQuality
@@ -83,7 +83,7 @@ def load_skinned(file):
             mesh.skinned_mesh = PhongMesh(texture,
                     [mesh.vertices, mesh.normals], mesh.faces, 30.0)
         else:
-            mesh.skinned_mesh = SkinnedMesh(
+            mesh.skinned_mesh = SkinnedMesh( axe,
                 [mesh.vertices, mesh.normals,
                     v_bone['id'], v_bone['weight']],
                 bone_nodes, bone_offsets, texture, mesh.faces)

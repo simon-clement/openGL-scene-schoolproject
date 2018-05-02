@@ -248,6 +248,8 @@ SKINNING_VERT = """#version 330 core
 // ---- camera geometry
 uniform mat4 projection, view;
 
+uniform int axe;
+
 // ---- skinning globals and attributes
 const int MAX_VERTEX_BONES=%d, MAX_BONES=%d;
 uniform mat4 boneMatrix[MAX_BONES];
@@ -279,8 +281,8 @@ void main() {
     mat3 M = mat3(vec3(modV[0]), vec3(modV[1]), vec3(modV[2]));
     outNormal = transpose(inverse(M)) * normale;
 
-    float latitude =  - (position[2]/2 - 0.5);
-    float longitude = atan(abs(position[1])/abs((position[0])))*2 ;
+    float latitude =  - (position[1+axe]/2 - 0.5);
+    float longitude = atan(abs(position[2-axe])/abs((position[0])))*2 ;
     fragTexCoord = vec2(longitude, latitude);
 }
 """ % (MAX_VERTEX_BONES, MAX_BONES)
