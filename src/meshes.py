@@ -3,6 +3,7 @@ import glfw                         # lean window system wrapper for OpenGL
 from src.shader import *
 import src
 from src.node import Node, SkinningControlNode
+from src.texture import Texture
 
 # -------------- Sky box mesh -------------------------------------------------
 class SkyBoxMesh():
@@ -240,6 +241,33 @@ class UIMesh:
 
     def set_charge(self, charge):
         self.charge = charge
+
+class ConsigneMesh:
+    """ Mesh Object, not loaded but created"""
+
+    def __init__(self, attributes, index=None):
+        self.vertexArray = VertexArray(attributes, index)
+        self.charge = 0 # en pourcentage de 0 à 1
+
+    def draw(self, projection, view, model, shaders=None, color=(1,1,1,1), **param):
+        shader = shaders[CONSIGNE_SHADER_ID]
+        charge_location = GL.glGetUniformLocation(shader.glid, 'charge')
+        GL.glUseProgram(shader.glid)
+        GL.glUniform1f(charge_location, self.charge)
+        GL.glEnable(GL.GL_BLEND)
+        GL.glDisable(GL.GL_DEPTH_TEST)
+        texture_location = GL.glGetUniformLocation(shader.glid, 'textureC')
+        texture = Texture("press.png")
+
+        GL.glActiveTexture(GL.GL_TEXTURE0)
+        GL.glBindTexture(GL.GL_TEXTURE_2D, texture.glid)
+        self.vertexArray.draw(GL.GL_TRIANGLES)
+        GL.glDisable(GL.GL_BLEND)
+        GL.glEnable(GL.GL_DEPTH_TEST)
+
+    def set_charge(self, charge):
+        self.charge = charge
+
 
 
 class ColorMesh:

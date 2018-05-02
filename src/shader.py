@@ -9,6 +9,7 @@ SKYBOX_SHADER_ID = 3
 UI_SHADER_ID = 4
 SKINNING_SHADER_ID = 5
 ARBRE_SHADER_ID = 6
+CONSIGNE_SHADER_ID = 7
 
 class Shader:
     """ Helper class to create and automatically destroy shader program """
@@ -215,6 +216,30 @@ void main() {
     }
 }"""
 
+# ------------------------ Consigne -----------------------------------------
+
+CONSIGNE_VERT = """#version 330 core
+layout(location = 0) in vec3 position;
+out vec2 fragTexCoord;
+void main() {
+    gl_Position = vec4(position, 1);
+    float x = position[0]-0.05;
+    float y = -(position[1]+0.75)*5.0;
+    fragTexCoord = vec2(x, y);
+}"""
+
+CONSIGNE_FRAG = """#version 330 core
+uniform sampler2D textureC;
+uniform float charge;
+in vec2 fragTexCoord;
+out vec4 outColor;
+void main() {
+    if (charge > 0) {
+        outColor = vec4(0, 0, 0, 0);
+    } else {
+        outColor = texture(textureC, fragTexCoord);
+    }
+}"""
 
 # ------------  Simple color shaders ------------------------------------------
 COLOR_VERT = """#version 330 core

@@ -30,7 +30,7 @@ from src.dino import Dino, Ptero
 from src.arbre import creer_arbre
 from src.cylindre import Cylindre
 from random import random
-from src.meshes import UIMesh
+from src.meshes import UIMesh, ConsigneMesh
 
 
 
@@ -75,15 +75,24 @@ def main():
 
     bleu = [0,0,1]
     rouge = [1, 0, 0]
-    vertices = np.array([[0.7, -0.5, 0],
+    vertices1 = np.array([[0.7, -0.5, 0],
                 [0.7, 0.5, 0],
                 [0.75, -0.5, 0],
                 [0.7, 0.5, 0],
                 [0.75, -0.5, 0],
                 [0.75,0.5,0]])
     colors = np.array([bleu, rouge, bleu, rouge, bleu, rouge])
-    barre_chargement = UIMesh(np.array([vertices, colors]))
+    barre_chargement = UIMesh(np.array([vertices1, colors]))
     viewer.add_UI(barre_chargement)
+
+    vertices2 = np.array([[0.05, -0.95, 0],
+                [0.05, -0.75, 0],
+                [-0.95, -0.95, 0],
+                [0.05, -0.75, 0],
+                [-0.95, -0.95, 0],
+                [-0.95, -0.75,0]])
+    consigne = ConsigneMesh([vertices2])
+    viewer.add_UI(consigne)
 
 
 
