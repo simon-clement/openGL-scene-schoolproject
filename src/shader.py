@@ -8,7 +8,7 @@ COLOR_SHADER_ID = 2
 SKYBOX_SHADER_ID = 3
 UI_SHADER_ID = 4
 SKINNING_SHADER_ID = 5
-PLATFORM_SHADER_ID = 6
+ARBRE_SHADER_ID = 6
 
 class Shader:
     """ Helper class to create and automatically destroy shader program """
@@ -327,4 +327,23 @@ in vec2 fragTexCoord;
 out vec4 outColor;
 void main() {
     outColor = texture(diffuseMap, fragTexCoord);
+}"""
+
+# ----------------------------- Arbre ----------------------------------------
+ARBRE_VERT = """#version 330 core
+uniform float facteur;
+layout(location = 0) in vec3 position;
+layout(location = 1) in vec3 normal;
+uniform mat4 viewMatrix;
+uniform mat4 modelMatrix;
+uniform mat4 projMatrix;
+out vec3 outNormal;
+out vec2 fragTexCoord;
+void main() {
+    gl_Position = projMatrix * viewMatrix * modelMatrix * vec4(position, 1);
+    mat4 modV = viewMatrix * modelMatrix;
+    mat3 M = mat3(vec3(modV[0]), vec3(modV[1]), vec3(modV[2]));
+    outNormal = transpose(inverse(M)) * normal;
+    float longitude = atan(abs(position[1])/abs((position[0])))*2 ;
+    fragTexCoord = vec2(longitude, position[2])/facteur;
 }"""

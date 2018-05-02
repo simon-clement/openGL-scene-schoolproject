@@ -4,7 +4,7 @@ import pyassimp
 import pyassimp.errors
 from src.texture import Texture
 from src.meshes import TexturedMesh, \
-    PhongMesh, SkinnedMesh, SkyBoxMesh, ParticleMesh, ColorMesh
+    PhongMesh, SkinnedMesh, SkyBoxMesh, ParticleMesh, ColorMesh, ArbreMesh
 from src.node import SkinningControlNode, Node
 from src.shader import MAX_BONES, MAX_VERTEX_BONES
 
@@ -177,7 +177,7 @@ def load_textured(file):
 
 
 
-def load_with_hierarchy(file):
+def load_with_hierarchy(file, arbre=False):
     """ load resources from file using pyassimp, return list of ColorMesh """
     nodes = {}  # nodes: string name -> node dictionary
     try:
@@ -203,13 +203,22 @@ def load_with_hierarchy(file):
 
 
     # ---- create ColorMesh objects
-    for mesh in scene.meshes:
-        # prepare textured mesh
-        texture = scene.materials[mesh.materialindex].texture
+    if arbre:
+        for mesh in scene.meshes:
+            # prepare textured mesh
+            texture = scene.materials[mesh.materialindex].texture
 
-        # create the textured mesh object from texture, attributes, and indices
-        mesh.loaded_mesh = PhongMesh(texture, [mesh.vertices, mesh.normals],
-                                     mesh.faces, 300.0)
+            # create the textured mesh object from texture, attributes, and indices
+            mesh.loaded_mesh = ArbreMesh(texture, [mesh.vertices, mesh.normals],
+                                        mesh.faces, 5.0)
+    else:
+        for mesh in scene.meshes:
+            # prepare textured mesh
+            texture = scene.materials[mesh.materialindex].texture
+
+            # create the textured mesh object from texture, attributes, and indices
+            mesh.loaded_mesh = PhongMesh(texture, [mesh.vertices, mesh.normals],
+                                        mesh.faces, 300.0)
 
     for final_node, assimp_node in nodes.values():
         final_node.add(*(_mesh.loaded_mesh for _mesh in assimp_node.meshes))
@@ -264,4 +273,3 @@ def load(file):
     print('Loaded %s\t(%d meshes, %d faces)' % (file, len(scene.meshes), size))
     pyassimp.release(scene)
     return meshes
-
