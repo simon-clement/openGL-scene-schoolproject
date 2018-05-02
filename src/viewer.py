@@ -113,7 +113,7 @@ class Viewer:
                 charge = min(self.vitesse_charge*(glfw.get_time() - self.offset_time_for_loading), 50)  / 50
             else:
                 charge = 0
-                
+
             for elem_ui in self.elements_UI:
                 elem_ui.set_charge(charge)
                 elem_ui.draw(projection, view, ModelMat,
