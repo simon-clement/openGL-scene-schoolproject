@@ -75,14 +75,14 @@ def main():
 
     bleu = [0,0,1]
     rouge = [1, 0, 0]
-    vertices1 = np.array([[0.7, -0.5, 0],
+    vertices = np.array([[0.7, -0.5, 0],
                 [0.7, 0.5, 0],
                 [0.75, -0.5, 0],
                 [0.7, 0.5, 0],
                 [0.75, -0.5, 0],
                 [0.75,0.5,0]])
     colors = np.array([bleu, rouge, bleu, rouge, bleu, rouge])
-    barre_chargement = UIMesh(np.array([vertices1, colors]))
+    barre_chargement = UIMesh(np.array([vertices, colors]))
     viewer.add_UI(barre_chargement)
 
     vertices2 = np.array([[0.05, -0.95, 0],

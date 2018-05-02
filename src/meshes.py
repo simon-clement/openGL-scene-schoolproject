@@ -223,7 +223,7 @@ class ArbreMesh:
 class UIMesh:
     """ Mesh Object, not loaded but created"""
 
-    def __init__(self, attributes, index=None):
+        def __init__(self, attributes, index=None):
         self.vertexArray = VertexArray(attributes, index)
         self.charge = 0 # en pourcentage de 0 à 1
 
