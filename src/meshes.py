@@ -98,7 +98,7 @@ class SkinnedCylinder(SkinningControlNode):
 
 class SkinnedMesh:
     """class of skinned mesh nodes in scene graph """
-    def __init__(self, attributes, bone_nodes, bone_offsets, index=None):
+    def __init__(self, attributes, bone_nodes, bone_offsets, texture, index=None):
 
         # setup shader attributes for linear blend skinning shader
         self.vertex_array = VertexArray(attributes, index)
@@ -108,6 +108,7 @@ class SkinnedMesh:
         # store skinning data
         self.bone_nodes = bone_nodes
         self.bone_offsets = bone_offsets
+        self.texture = texture
 
     def draw(self, projection, view, _model, shaders=None, **_kwargs):
         """ skinning object draw method """
@@ -120,6 +121,9 @@ class SkinnedMesh:
         GL.glUniformMatrix4fv(loc, 1, True, projection)
         loc = GL.glGetUniformLocation(shid, 'view')
         GL.glUniformMatrix4fv(loc, 1, True, view)
+        texture_location = GL.glGetUniformLocation(shid, 'diffuseMap')
+        GL.glActiveTexture(GL.GL_TEXTURE0)
+        GL.glBindTexture(GL.GL_TEXTURE_2D, self.texture.glid)
 
         # bone world transform matrices need to be passed for skinning
         for bone_id, node in enumerate(self.bone_nodes):

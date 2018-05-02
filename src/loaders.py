@@ -80,13 +80,13 @@ def load_skinned(file):
         # initialize skinned mesh and store in pyassimp_mesh for node addition
         if len(bone_nodes) == 0:
             #  not skinned
-            mesh.skinned_mesh = PhongMesh(texture, [mesh.vertices, mesh.normals], \
-                                          mesh.faces)
+            mesh.skinned_mesh = PhongMesh(texture, 
+                    [mesh.vertices, mesh.normals], mesh.faces)
         else:
             mesh.skinned_mesh = SkinnedMesh(
-                [mesh.vertices, mesh.normals, v_bone['id'], v_bone['weight']],
-                bone_nodes, bone_offsets, mesh.faces
-            )
+                [mesh.vertices, mesh.normals, 
+                    v_bone['id'], v_bone['weight']],
+                bone_nodes, bone_offsets, texture, mesh.faces)
 
     # ------ add each mesh to its intended nodes as indicated by assimp
     for final_node, assimp_node in nodes.values():
