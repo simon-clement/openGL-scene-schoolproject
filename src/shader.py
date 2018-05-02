@@ -76,7 +76,6 @@ uniform sampler2D diffuseMap;
 in vec3 outNormal;
 in vec2 fragTexCoord;
 out vec4 outcolor;
-uniform vec3 view;
 void main() {
     vec4 ambiant = vec4(0.1,0,0,1);
     vec3 normal = normalize(outNormal);

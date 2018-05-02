@@ -60,6 +60,8 @@ def main():
     viewer.add(arb1)
     arb2 = creer_arbre(10, 3, cylindre, (0, -.5, -25))
     viewer.add(arb2)
+
+
     x1 = -30
     x2 = -50
     h = 22
