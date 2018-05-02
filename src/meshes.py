@@ -160,8 +160,6 @@ class PhongMesh:
             GL.glGetUniformLocation(shader.glid, 'projMatrix')
         modelMatrix_location = \
             GL.glGetUniformLocation(shader.glid, 'modelMatrix')
-        viewVec_location = \
-            GL.glGetUniformLocation(shader.glid, 'view')
 
         texture_location = GL.glGetUniformLocation(shader.glid, 'diffuseMap')
         facteur_texture = GL.glGetUniformLocation(shader.glid, 'facteur')
@@ -172,7 +170,6 @@ class PhongMesh:
                               model)
         GL.glUniformMatrix4fv(viewMatrix_location, 1, True, view)
         GL.glUniformMatrix4fv(projMatrix_location, 1, True, projection)
-        GL.glUniform3fv(viewVec_location, 1, view_vector)
 
         # texture access setups
 
