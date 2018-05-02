@@ -61,6 +61,7 @@ class Viewer:
         self.geyser_shader = Shader(GEYSER_PARTICLE_VERT, GEYSER_PARTICLE_FRAG)
         self.skybox_shader = Shader(SKYBOX_VERT, SKYBOX_FRAG)
         self.ui_shader = Shader(UI_VERT, UI_FRAG)
+        self.skinnning_shader = Shader(SKINNING_VERT, LAMBERTIAN_FRAG)
         self.shaders = {}
         self.shaders[GEYSER_SHADER_ID] = self.geyser_shader
         print("SHADER GEYSER : ", self.shaders[GEYSER_SHADER_ID])
@@ -68,6 +69,7 @@ class Viewer:
         #  self.shaders[COLOR_SHADER_ID] = self.color_shader
         self.shaders[SKYBOX_SHADER_ID] = self.skybox_shader
         self.shaders[UI_SHADER_ID] = self.ui_shader
+        self.shaders[SKINNING_SHADER_ID] = self.skinnning_shader
         self.particle_system = None
         self.elements_interacting = []
         self.elements_UI = []
@@ -119,7 +121,7 @@ class Viewer:
                 charge = min(self.vitesse_charge*(glfw.get_time() - self.offset_time_for_loading), 50)  / 50
             else:
                 charge = 0
-                
+
             for elem_ui in self.elements_UI:
                 elem_ui.set_charge(charge)
                 elem_ui.draw(projection, view, ModelMat,

@@ -40,8 +40,15 @@ def main():
     viewer.set_skybox(load_skybox("sphere.dae", "ciel2.png"))
 
     viewer.add(load_with_hierarchy("sol.dae")[0])
-    viewer.add_element_interacting(Dino(load_skinned("dinoPlateforme.dae")[0]))
-    viewer.add(Ptero(load_skinned("pterosaur.dae")[0]))
+    viewer.add_element_interacting(Dino(load_skinned("dinoPlateforme.dae", 0)[0]))
+    mon_pterosaure = load_skinned("pterosaur.dae", 1)[0]
+    viewer.add(Ptero(mon_pterosaure, 90, 20, 25, 0.7, 8, 0))
+    viewer.add(Ptero(mon_pterosaure))
+    viewer.add(Ptero(mon_pterosaure, 250, 45, 46, 1, 2, 1))
+    viewer.add(Ptero(mon_pterosaure, 300, 50, 30, 1.5, 5))
+    viewer.add(Ptero(mon_pterosaure, 30, 60, 40, 0.5, 1, 1))
+    viewer.add(Ptero(mon_pterosaure, 190, 70, 50, 1.2, 4))
+    #viewer.add(Ptero(load_skinned("pterosaur.dae")[0], angle=0, distance=40, hauteur=20,  taille=1, decalage=0, sens=0))
     viewer.add_element_interacting(load_for_particle("cube_particle.dae")[0])
 
     bleu = [0,0,1]

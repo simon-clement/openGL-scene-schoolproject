@@ -10,7 +10,7 @@ from src.shader import MAX_BONES, MAX_VERTEX_BONES
 
 
 # -------------- 3D resource loader -------------------------------------------
-def load_skinned(file):
+def load_skinned(file, axe):
     """load resources from file using pyassimp, return node hierarchy """
     try:
         option = pyassimp.postprocess.aiProcessPreset_TargetRealtime_MaxQuality
@@ -54,6 +54,9 @@ def load_skinned(file):
 
     root_node = make_nodes(scene.rootnode)
 
+    for mat in scene.materials:
+        mat.texture = Texture(mat.properties[("file", 1)])
+
     # ---- create SkinnedMesh objects
     for mesh in scene.meshes:
         # -- skinned mesh: weights given per bone => convert per vertex for GPU
@@ -71,16 +74,19 @@ def load_skinned(file):
         bone_nodes = [nodes[bone.name][0] for bone in mesh.bones]
         bone_offsets = [bone.offsetmatrix for bone in mesh.bones]
 
+        # prepare textured mesh
+        texture = scene.materials[mesh.materialindex].texture
+
         # initialize skinned mesh and store in pyassimp_mesh for node addition
         if len(bone_nodes) == 0:
             #  not skinned
-            mesh.skinned_mesh = PhongMesh([mesh.vertices, mesh.normals], \
-                                          mesh.faces)
+            mesh.skinned_mesh = PhongMesh(texture,
+                    [mesh.vertices, mesh.normals], mesh.faces, 30.0)
         else:
-            mesh.skinned_mesh = SkinnedMesh(
-                [mesh.vertices, mesh.normals, v_bone['id'], v_bone['weight']],
-                bone_nodes, bone_offsets, mesh.faces
-            )
+            mesh.skinned_mesh = SkinnedMesh( axe,
+                [mesh.vertices, mesh.normals,
+                    v_bone['id'], v_bone['weight']],
+                bone_nodes, bone_offsets, texture, mesh.faces)
 
     # ------ add each mesh to its intended nodes as indicated by assimp
     for final_node, assimp_node in nodes.values():
@@ -148,18 +154,8 @@ def load_textured(file):
         return []  # error reading => return empty list
 
     # Note: embedded textures not supported at the moment
-    path = os.path.dirname(file)
     for mat in scene.materials:
-        mat.tokens = dict(reversed(list(mat.properties.items())))
-        if 'file' in mat.tokens:  # texture file token
-            tname = mat.tokens['file'].split('/')[-1].split('\\')[-1]
-            # search texture in file's whole subdir since path often screwed up
-            tname = [os.path.join(d[0], f) for d in os.walk(path) for f in d[2]
-                     if tname.startswith(f) or f.startswith(tname)]
-            if tname:
-                mat.texture = Texture(tname[0])
-            else:
-                print('Failed to find texture:', tname)
+        mat.texture = Texture(mat.properties[("file", 1)])
 
     # prepare textured mesh
     meshes = []
@@ -201,10 +197,19 @@ def load_with_hierarchy(file):
 
     root_node = make_nodes(scene.rootnode)
 
+
+    for mat in scene.materials:
+        mat.texture = Texture(mat.properties[("file", 1)])
+
+
     # ---- create ColorMesh objects
     for mesh in scene.meshes:
-        mesh.loaded_mesh = PhongMesh([mesh.vertices, mesh.normals],
-                                     mesh.faces)
+        # prepare textured mesh
+        texture = scene.materials[mesh.materialindex].texture
+
+        # create the textured mesh object from texture, attributes, and indices
+        mesh.loaded_mesh = PhongMesh(texture, [mesh.vertices, mesh.normals],
+                                     mesh.faces, 300.0)
 
     for final_node, assimp_node in nodes.values():
         final_node.add(*(_mesh.loaded_mesh for _mesh in assimp_node.meshes))
@@ -234,7 +239,6 @@ def load_skybox(sphere, ma_texture):
     meshes = []
     for mesh in scene.meshes:
         texture = scene.materials[mesh.materialindex].texture
-
         # create the textured mesh object from texture, attributes, and indices
         meshes.append(SkyBoxMesh(texture, [mesh.vertices], mesh.faces))
 

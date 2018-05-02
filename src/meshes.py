@@ -98,22 +98,23 @@ class SkinnedCylinder(SkinningControlNode):
 
 class SkinnedMesh:
     """class of skinned mesh nodes in scene graph """
-    def __init__(self, attributes, bone_nodes, bone_offsets, index=None):
+    def __init__(self, axe, attributes, bone_nodes, bone_offsets, texture, index=None):
 
         # setup shader attributes for linear blend skinning shader
         self.vertex_array = VertexArray(attributes, index)
 
         # feel free to move this up in Viewer as shown in previous practicals
-        self.skinning_shader = Shader(SKINNING_VERT, COLOR_FRAG)
 
         # store skinning data
         self.bone_nodes = bone_nodes
         self.bone_offsets = bone_offsets
+        self.texture = texture
+        self.axe = axe
 
-    def draw(self, projection, view, _model, **_kwargs):
+    def draw(self, projection, view, _model, shaders=None, **_kwargs):
         """ skinning object draw method """
 
-        shid = self.skinning_shader.glid
+        shid = shaders[SKINNING_SHADER_ID].glid
         GL.glUseProgram(shid)
 
         # setup camera geometry parameters
@@ -121,6 +122,11 @@ class SkinnedMesh:
         GL.glUniformMatrix4fv(loc, 1, True, projection)
         loc = GL.glGetUniformLocation(shid, 'view')
         GL.glUniformMatrix4fv(loc, 1, True, view)
+        loc = GL.glGetUniformLocation(shid, 'axe')
+        GL.glUniform1i(loc, self.axe)
+        texture_location = GL.glGetUniformLocation(shid, 'diffuseMap')
+        GL.glActiveTexture(GL.GL_TEXTURE0)
+        GL.glBindTexture(GL.GL_TEXTURE_2D, self.texture.glid)
 
         # bone world transform matrices need to be passed for skinning
         for bone_id, node in enumerate(self.bone_nodes):
@@ -139,8 +145,10 @@ class SkinnedMesh:
 class PhongMesh:
     """ Mesh Object, loaded from obj file"""
 
-    def __init__(self, attributes, index):
+    def __init__(self, texture, attributes, index, facteur_texture):
         self.vertexArray = VertexArray(attributes, index)
+        self.texture = texture
+        self.facteur = facteur_texture
 
     def draw(self, projection, view, model, shaders=None,
              color=(1, 1, 1, 1), view_vector=(0, 0, 1), **param):
@@ -155,11 +163,21 @@ class PhongMesh:
         viewVec_location = \
             GL.glGetUniformLocation(shader.glid, 'view')
 
+        texture_location = GL.glGetUniformLocation(shader.glid, 'diffuseMap')
+        facteur_texture = GL.glGetUniformLocation(shader.glid, 'facteur')
+        GL.glActiveTexture(GL.GL_TEXTURE0)
+        GL.glBindTexture(GL.GL_TEXTURE_2D, self.texture.glid)
+
         GL.glUniformMatrix4fv(modelMatrix_location, 1, True,
                               model)
         GL.glUniformMatrix4fv(viewMatrix_location, 1, True, view)
         GL.glUniformMatrix4fv(projMatrix_location, 1, True, projection)
         GL.glUniform3fv(viewVec_location, 1, view_vector)
+
+        # texture access setups
+
+        GL.glUniform1f(facteur_texture, self.facteur)
+        GL.glUniform1i(texture_location, 0)
 
         # draw triangle as GL_TRIANGLE vertex array, draw array call
         self.vertexArray.draw(GL.GL_TRIANGLES)
