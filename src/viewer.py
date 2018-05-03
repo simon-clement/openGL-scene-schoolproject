@@ -64,6 +64,7 @@ class Viewer:
         self.consigne_shader = Shader(CONSIGNE_VERT, CONSIGNE_FRAG)
         self.skinnning_shader = Shader(SKINNING_VERT, LAMBERTIAN_FRAG)
         self.arbre_shader = Shader(ARBRE_VERT, LAMBERTIAN_FRAG)
+        self.herbe_shader = Shader(HERBE_VERT, HERBE_FRAG)
         self.shaders = {}
         self.shaders[GEYSER_SHADER_ID] = self.geyser_shader
         print("SHADER GEYSER : ", self.shaders[GEYSER_SHADER_ID])
@@ -74,6 +75,7 @@ class Viewer:
         self.shaders[CONSIGNE_SHADER_ID] = self.consigne_shader
         self.shaders[SKINNING_SHADER_ID] = self.skinnning_shader
         self.shaders[ARBRE_SHADER_ID] = self.arbre_shader
+        self.shaders[HERBE_SHADER_ID] = self.herbe_shader
         self.particle_system = None
         self.elements_interacting = []
         self.elements_UI = []

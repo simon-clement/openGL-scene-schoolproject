@@ -4,7 +4,7 @@ import pyassimp
 import pyassimp.errors
 from src.texture import Texture
 from src.meshes import TexturedMesh, \
-    PhongMesh, SkinnedMesh, SkyBoxMesh, ParticleMesh, ColorMesh, ArbreMesh
+    PhongMesh, SkinnedMesh, SkyBoxMesh, ParticleMesh, ColorMesh, ArbreMesh, HerbeMesh
 from src.node import SkinningControlNode, Node
 from src.shader import MAX_BONES, MAX_VERTEX_BONES
 
@@ -177,7 +177,7 @@ def load_textured(file):
 
 
 
-def load_with_hierarchy(file, arbre=False):
+def load_with_hierarchy(file, objet=0):
     """ load resources from file using pyassimp, return list of ColorMesh """
     nodes = {}  # nodes: string name -> node dictionary
     try:
@@ -203,15 +203,7 @@ def load_with_hierarchy(file, arbre=False):
 
 
     # ---- create ColorMesh objects
-    if arbre:
-        for mesh in scene.meshes:
-            # prepare textured mesh
-            texture = scene.materials[mesh.materialindex].texture
-
-            # create the textured mesh object from texture, attributes, and indices
-            mesh.loaded_mesh = ArbreMesh(texture, [mesh.vertices, mesh.normals],
-                                        mesh.faces, 5.0)
-    else:
+    if objet==0:
         for mesh in scene.meshes:
             # prepare textured mesh
             texture = scene.materials[mesh.materialindex].texture
@@ -219,6 +211,23 @@ def load_with_hierarchy(file, arbre=False):
             # create the textured mesh object from texture, attributes, and indices
             mesh.loaded_mesh = PhongMesh(texture, [mesh.vertices, mesh.normals],
                                         mesh.faces, 300.0)
+    elif objet==1: # Arbre
+        for mesh in scene.meshes:
+            # prepare textured mesh
+            texture = scene.materials[mesh.materialindex].texture
+
+            # create the textured mesh object from texture, attributes, and indices
+            mesh.loaded_mesh = ArbreMesh(texture, [mesh.vertices, mesh.normals],
+                                        mesh.faces, 5.0)
+    else: # Herbe
+        for mesh in scene.meshes:
+            # prepare textured mesh
+            texture = scene.materials[mesh.materialindex].texture
+
+            # create the textured mesh object from texture, attributes, and indices
+            mesh.loaded_mesh = HerbeMesh(texture, [mesh.vertices, mesh.normals],
+                                        mesh.faces, 100.0)
+
 
     for final_node, assimp_node in nodes.values():
         final_node.add(*(_mesh.loaded_mesh for _mesh in assimp_node.meshes))

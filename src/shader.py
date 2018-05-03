@@ -10,6 +10,7 @@ UI_SHADER_ID = 4
 SKINNING_SHADER_ID = 5
 ARBRE_SHADER_ID = 6
 CONSIGNE_SHADER_ID = 7
+HERBE_SHADER_ID = 8
 
 class Shader:
     """ Helper class to create and automatically destroy shader program """
@@ -371,4 +372,39 @@ void main() {
     outNormal = transpose(inverse(M)) * normal;
     float longitude = atan(abs(position[1])/abs((position[0])))*2 ;
     fragTexCoord = vec2(longitude, position[2])/facteur;
+}"""
+
+# ------------  Herbe shaders ----------------------
+HERBE_VERT = """#version 330 core
+uniform float facteur;
+layout(location = 0) in vec3 position;
+layout(location = 1) in vec3 normal;
+uniform mat4 viewMatrix;
+uniform mat4 modelMatrix;
+uniform mat4 projMatrix;
+out vec3 outNormal;
+out vec2 fragTexCoord;
+void main() {
+    gl_Position = projMatrix * viewMatrix * modelMatrix * vec4(position, 1);
+    mat4 modV = viewMatrix * modelMatrix;
+    mat3 M = mat3(vec3(modV[0]), vec3(modV[1]), vec3(modV[2]));
+    outNormal = transpose(inverse(M)) * normal;
+    fragTexCoord = 60.0*vec2(position[0]+1, position[1]-1)/facteur /1.2;
+}"""
+
+HERBE_FRAG = """#version 330 core
+uniform sampler2D diffuseMap;
+in vec3 outNormal;
+in vec2 fragTexCoord;
+out vec4 outcolor;
+void main() {
+    vec4 ambiant = vec4(0.1,0,0,1);
+    vec3 normal = normalize(outNormal);
+    vec3 l = vec3(0, 0, 1);
+    vec4 col = texture(diffuseMap, fragTexCoord);
+    if (col[3]<0.1){
+        discard;
+    }
+    float dotP = max(0, dot(normal, l));
+    outcolor = col*dotP + ambiant;
 }"""

@@ -28,7 +28,8 @@ from src.loaders import load_skinned, load_skybox, load_with_hierarchy, \
     load_for_particle, load_textured
 from src.dino import Dino, Ptero
 from src.arbre import creer_arbre
-from src.cylindre import Cylindre
+from src.herbe import creer_herbe
+from src.cylindre import Cylindre, Plan
 from random import random
 from src.texture import Texture
 from src.meshes import UIMesh, ConsigneMesh
@@ -67,14 +68,31 @@ def main():
     x1 = -30
     x2 = -50
     h = 22
-    z1 = -70
+    z1 = -70cylindre
     z2 = -90
     for i in range(4):
         arb = creer_arbre(8 + random() * 4, 2, cylindre,
                           ((x2 - x1) * random() + x1, h, (z2 - z1) * random() + z1))
         viewer.add(arb)
-    
+
     """
+
+    # la je fais de l'herbe
+
+    plan = Plan()
+    erb1 = creer_herbe(plan, 10.0, (0, -.5, -25))
+    viewer.add(erb1)
+    """
+    x1 = -30
+    x2 = -50
+    h = 22
+    z1 = -70
+    z2 = -90
+    for _ in range(4):
+        erb = creer_herbe(plan, 5, ((x2 - x1) * random() + x1, h, (z2 - z1) * random() + z1))
+        viewer.add(erb)
+    """
+
 
     bleu = [0,0,1]
     rouge = [1, 0, 0]

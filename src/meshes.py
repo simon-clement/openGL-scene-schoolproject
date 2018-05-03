@@ -220,6 +220,54 @@ class ArbreMesh:
         # draw triangle as GL_TRIANGLE vertex array, draw array call
         self.vertexArray.draw(GL.GL_TRIANGLES)
 
+class HerbeMesh():
+    """ Mesh Object, loaded from obj file"""
+
+    def __init__(self, texture, attributes, index, facteur_texture):
+        self.vertexArray = VertexArray(attributes, index)
+        self.texture = texture
+        self.facteur = facteur_texture
+
+    def draw(self, projection, view, model, shaders=None,
+             color=(1, 1, 1, 1), view_vector=(0, 0, 1), **param):
+        shader = shaders[HERBE_SHADER_ID]
+
+        GL.glEnable(GL.GL_BLEND)
+        # GL.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
+        # GL.glDepthMask(GL.GL_FALSE);
+        GL.glUseProgram(shader.glid)
+
+        viewMatrix_location = \
+            GL.glGetUniformLocation(shader.glid, 'viewMatrix')
+        projMatrix_location = \
+            GL.glGetUniformLocation(shader.glid, 'projMatrix')
+        modelMatrix_location = \
+            GL.glGetUniformLocation(shader.glid, 'modelMatrix')
+
+        texture_location = GL.glGetUniformLocation(shader.glid, 'diffuseMap')
+        facteur_texture = GL.glGetUniformLocation(shader.glid, 'facteur')
+        GL.glActiveTexture(GL.GL_TEXTURE0)
+        GL.glBindTexture(GL.GL_TEXTURE_2D, self.texture.glid)
+
+        GL.glUniformMatrix4fv(modelMatrix_location, 1, True,
+                              model)
+        GL.glUniformMatrix4fv(viewMatrix_location, 1, True, view)
+        GL.glUniformMatrix4fv(projMatrix_location, 1, True, projection)
+
+        # texture access setups
+
+        GL.glUniform1f(facteur_texture, self.facteur)
+        GL.glUniform1i(texture_location, 0)
+
+        # draw triangle as GL_TRIANGLE vertex array, draw array call
+        self.vertexArray.draw(GL.GL_TRIANGLES)
+
+        # GL.glDisable(GL.GL_CULL_FACE)
+        # GL.glDepthMask(GL.GL_TRUE);
+        GL.glDisable(GL.GL_BLEND)
+        
+
+
 class UIMesh:
     """ Mesh Object, not loaded but created"""
 
@@ -258,7 +306,7 @@ class ConsigneMesh:
         GL.glEnable(GL.GL_BLEND)
         GL.glDisable(GL.GL_DEPTH_TEST)
         texture_location = GL.glGetUniformLocation(shader.glid, 'textureC')
-        
+
         GL.glActiveTexture(GL.GL_TEXTURE0)
         GL.glBindTexture(GL.GL_TEXTURE_2D, self.texture.glid)
         self.vertexArray.draw(GL.GL_TRIANGLES)
