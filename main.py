@@ -82,16 +82,16 @@ def main():
     plan = Plan()
     erb1 = creer_herbe(plan, 10.0, (0, -.5, -25))
     viewer.add(erb1)
-    """
+
     x1 = -30
     x2 = -50
     h = 22
     z1 = -70
     z2 = -90
-    for _ in range(4):
-        erb = creer_herbe(plan, 5, ((x2 - x1) * random() + x1, h, (z2 - z1) * random() + z1))
+    for _ in range(5):
+        erb = creer_herbe(plan, 15, ((x2 - x1) * random() + x1, h, (z2 - z1) * random() + z1))
         viewer.add(erb)
-    """
+
 
 
     bleu = [0,0,1]
