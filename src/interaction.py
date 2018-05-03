@@ -5,12 +5,10 @@ import glfw                         # lean window system wrapper for OpenGL
 class GLFWTrackball(Trackball):
     """ Use in Viewer for interactive viewpoint control """
 
-    def __init__(self, win, bornes_zoom=(0.001, 190.),
+    def __init__(self, win, bornes_zoom=(25, 190.),
                  bornes_rotate=(0.5, 1)):
         """ Init needs a GLFW window handler 'win' to register callbacks """
         super().__init__()
-        self.angle_z = (bornes_rotate[0] + bornes_rotate[1])/2
-        self.distance = (bornes_zoom[0] + bornes_zoom[1]) / 3
 
         self.angle_z = bornes_rotate[0]
         self.distance = bornes_zoom[1]
