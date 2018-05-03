@@ -32,6 +32,7 @@ from src.herbe import creer_herbe
 from random import random
 from src.texture import Texture
 from src.meshes import UIMesh, ConsigneMesh
+from src.cylindre import Cylindre, Plan
 
 
 
@@ -41,13 +42,13 @@ def main():
     viewer = Viewer()
 
     # Sky box :
-    viewer.set_skybox(load_skybox("sphere.dae", "ciel2.png"))
+    viewer.set_skybox(load_skybox("meshes/sphere.dae", "textures/ciel.png"))
 
-    viewer.add(load_with_hierarchy("sol.dae")[0])
-    viewer.add_element_interacting(Dino(load_skinned("dinoPlateforme.dae", 0)[0]))
+    viewer.add(load_with_hierarchy("meshes/sol.dae")[0])
+    viewer.add_element_interacting(Dino(load_skinned("meshes/dinoPlateforme.dae", 0)[0]))
 
     # ------ AJOUT DE LA FAMILLE DE PTERODACTYLES ---------
-    mon_pterosaure = load_skinned("pterosaur.dae", 1)[0]
+    mon_pterosaure = load_skinned("meshes/pterosaur.dae", 1)[0]
     viewer.add(Ptero(mon_pterosaure, 90, 20, 25, 0.7, 8, 0))
     viewer.add(Ptero(mon_pterosaure))
     viewer.add(Ptero(mon_pterosaure, 250, 45, 46, 1, 2, 1))
@@ -56,7 +57,7 @@ def main():
     viewer.add(Ptero(mon_pterosaure, 190, 70, 50, 1.2, 4))
 
     # ------- CHARGEMENT DU CUBE (particule) POUR LE GEYSER -------
-    viewer.add_element_interacting(load_for_particle("cube_particle.dae")[0])
+    viewer.add_element_interacting(load_for_particle("meshes/cube_particle.dae")[0])
 
 
     # ---------- CREATION DES ARBRES ---------
@@ -117,7 +118,7 @@ def main():
                 [0.95, -0.65, 0],
                 [-0.05, -0.85, 0],
                 [-0.05, -0.65,0]])
-    texture = Texture("press.png")
+    texture = Texture("textures/press.png")
     consigne = ConsigneMesh(texture, [vertices2])
     viewer.add_UI(consigne)
 

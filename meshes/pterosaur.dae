@@ -12,7 +12,7 @@
   </asset>
   <library_images>
     <image id="plumes_jpg" name="plumes_jpg">
-      <init_from>plumes.jpg</init_from>
+      <init_from>textures/plumes.jpg</init_from>
     </image>
   </library_images>
   <library_effects>

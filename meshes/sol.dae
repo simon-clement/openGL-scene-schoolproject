@@ -12,7 +12,7 @@
   </asset>
   <library_images>
     <image id="textureSol_jpg" name="textureSol_jpg">
-      <init_from>textureSol.jpg</init_from>
+        <init_from>textures/textureSol.jpg</init_from>
     </image>
   </library_images>
   <library_effects>

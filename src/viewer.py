@@ -67,7 +67,6 @@ class Viewer:
         self.herbe_shader = Shader(HERBE_VERT, HERBE_FRAG)
         self.shaders = {}
         self.shaders[GEYSER_SHADER_ID] = self.geyser_shader
-        print("SHADER GEYSER : ", self.shaders[GEYSER_SHADER_ID])
         self.shaders[LAMBERTIAN_SHADER_ID] = self.lambertian_shader
         #  self.shaders[COLOR_SHADER_ID] = self.color_shader
         self.shaders[SKYBOX_SHADER_ID] = self.skybox_shader
