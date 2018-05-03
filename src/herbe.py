@@ -16,8 +16,8 @@ def herbe(plan, angle_z=0, ind=3):
         baseH.add(herbe(plan, 60, ind))
     return baseH
 
-def creer_herbe(plan, taille, position):
-    transform = (translate(position) @ rotate(axis=(1, 0, 0), angle=(90)) @ scale(taille))
+def creer_herbe(plan, taille, position, angle_z=0):
+    transform = (translate(position) @ rotate(axis=(0, 1, 0), angle=(angle_z)) @ rotate(axis=(1, 0, 0), angle=(90)) @ scale(taille))
     baseH = Node(name='arbre', transform=transform)
     baseH.add(herbe(plan))
     return baseH

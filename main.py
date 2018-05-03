@@ -89,7 +89,7 @@ def main():
     z1 = -70
     z2 = -90
     for _ in range(5):
-        erb = creer_herbe(plan, 15, ((x2 - x1) * random() + x1, h, (z2 - z1) * random() + z1))
+        erb = creer_herbe(plan, 15, ((x2 - x1) * random() + x1, h, (z2 - z1) * random() + z1), 30.0*random())
         viewer.add(erb)
 
 
