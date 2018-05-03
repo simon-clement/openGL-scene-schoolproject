@@ -29,7 +29,6 @@ from src.loaders import load_skinned, load_skybox, load_with_hierarchy, \
 from src.dino import Dino, Ptero
 from src.arbre import creer_arbre
 from src.herbe import creer_herbe
-from src.cylindre import Cylindre, Plan
 from random import random
 from src.texture import Texture
 from src.meshes import UIMesh, ConsigneMesh
@@ -46,6 +45,8 @@ def main():
 
     viewer.add(load_with_hierarchy("sol.dae")[0])
     viewer.add_element_interacting(Dino(load_skinned("dinoPlateforme.dae", 0)[0]))
+
+    # ------ AJOUT DE LA FAMILLE DE PTERODACTYLES ---------
     mon_pterosaure = load_skinned("pterosaur.dae", 1)[0]
     viewer.add(Ptero(mon_pterosaure, 90, 20, 25, 0.7, 8, 0))
     viewer.add(Ptero(mon_pterosaure))
@@ -53,10 +54,12 @@ def main():
     viewer.add(Ptero(mon_pterosaure, 300, 50, 30, 1.5, 5))
     viewer.add(Ptero(mon_pterosaure, 30, 60, 40, 0.5, 1, 1))
     viewer.add(Ptero(mon_pterosaure, 190, 70, 50, 1.2, 4))
-    #viewer.add(Ptero(load_skinned("pterosaur.dae")[0], angle=0, distance=40, hauteur=20,  taille=1, decalage=0, sens=0))
+
+    # ------- CHARGEMENT DU CUBE (particule) POUR LE GEYSER -------
     viewer.add_element_interacting(load_for_particle("cube_particle.dae")[0])
 
 
+    # ---------- CREATION DES ARBRES ---------
     cylindre = Cylindre()
     arb1 = creer_arbre(10, 2, cylindre, (-20, 0, -20))
     viewer.add(arb1)
@@ -94,6 +97,7 @@ def main():
 
 
 
+    # ---- CREATION de la jauge de chargement -----
     bleu = [0,0,1]
     rouge = [1, 0, 0]
     vertices = np.array([[0.7, -0.5, 0],
@@ -106,6 +110,7 @@ def main():
     barre_chargement = UIMesh(np.array([vertices, colors]))
     viewer.add_UI(barre_chargement)
 
+    # ---- CREATION DU TEXTE "press space" ---
     vertices2 = np.array([[0.95, -0.85, 0],
                 [0.95, -0.65, 0],
                 [-0.05, -0.85, 0],
@@ -116,17 +121,6 @@ def main():
     consigne = ConsigneMesh(texture, [vertices2])
     viewer.add_UI(consigne)
 
-
-
-    # if len(sys.argv) < 2:
-    #     print('Cylinder skinning demo.')
-    #     print('Note:\n\t%s [3dfile]*\n\n3dfile\t\t the filename of a model in'
-    #           ' format supported by pyassimp.' % sys.argv[0])
-    #     viewer.add(SkinnedCylinder())
-    # else:
-    #     viewer.add(*[m for file in sys.argv[1:] for m in load_skinned(file)])
-
-    # start rendering loop
     viewer.run()
 
 
